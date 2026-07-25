@@ -1,0 +1,58 @@
+name: Bölüm Okuyucu ve Araştırma Testi
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Depoyu al
+        uses: actions/checkout@v6
+      - name: Bölüm paketini aç
+        run: |
+          cat \
+            content-pack/chapters.part.00 \
+            content-pack/chapters.part.01 \
+            content-pack/chapters.part.02fix.00 \
+            content-pack/chapters.part.02fix.01 \
+            content-pack/chapters.part.02fix.02 \
+            content-pack/chapters.part.02fix.03 \
+            content-pack/chapters.part.03 \
+            content-pack/chapters.part.04 \
+            | base64 --decode > /tmp/chapters-preview.tar.gz
+          echo "4c22b719a6e6356cb6baba8f19a5a19d2bc1d38d97ec452fdd112f2f62bb2295  /tmp/chapters-preview.tar.gz" | sha256sum --check
+          mkdir -p /tmp/chapters
+          tar -xzf /tmp/chapters-preview.tar.gz -C /tmp/chapters
+      - name: Bölümleri doğrula
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('/tmp/chapters')
+          index = json.loads((root / 'index.json').read_text(encoding='utf-8'))
+          assert len(index) == 24
+          for number in range(1, 25):
+              data = json.loads((root / f'{number:02}.json').read_text(encoding='utf-8'))
+              assert data['number'] == number
+              assert data['title']
+              assert data['sections']
+          print('24 bölüm doğrulandı')
+          PY
+      - name: Web dosyalarını doğrula
+        run: |
+          test -f index.html
+          test -f chapter.html
+          test -f mevzuat-rag.js
+          test -f turkce-eslesme.js
+          test -f web-research.js
+          grep -q 'Bölümü oku' index.html
+          grep -q 'chapters/' chapter.html
+          grep -q 'Kitap + internet' index.html
+          node --check mevzuat-rag.js
+          node --check turkce-eslesme.js
+          node --check web-research.js

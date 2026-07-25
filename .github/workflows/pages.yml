@@ -21,7 +21,7 @@ jobs:
       - name: Depoyu al
         uses: actions/checkout@v6
 
-      - name: Pages durumunu denetle ve etkinleştirmeyi dene
+      - name: Pages durumunu denetle
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -30,26 +30,12 @@ jobs:
           get_code=$(curl -sS -o pages-get.json -w "%{http_code}" \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${GH_TOKEN}" \
-            -H "X-GitHub-Api-Version: 2026-03-10" \
-            "$api")
-
-          post_code="not-needed"
-          if [ "$get_code" = "404" ]; then
-            post_code=$(curl -sS -o pages-post.json -w "%{http_code}" \
-              -X POST \
-              -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer ${GH_TOKEN}" \
-              -H "X-GitHub-Api-Version: 2026-03-10" \
-              "$api" \
-              -d '{"build_type":"workflow"}')
-          fi
-
+            -H "X-GitHub-Api-Version: 2026-03-10" "$api")
           {
             echo "GET=$get_code"
-            echo "POST=$post_code"
+            echo "POST=not-needed"
             echo "RUN=${GITHUB_RUN_ID}"
           } > .pages-status.txt
-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .pages-status.txt
@@ -58,27 +44,47 @@ jobs:
             git push
           fi
 
+      - name: Dijital kitap paketini aç
+        run: |
+          cat \
+            content-pack/chapters.part.00 \
+            content-pack/chapters.part.01 \
+            content-pack/chapters.part.02fix.00 \
+            content-pack/chapters.part.02fix.01 \
+            content-pack/chapters.part.02fix.02 \
+            content-pack/chapters.part.02fix.03 \
+            content-pack/chapters.part.03 \
+            content-pack/chapters.part.04 \
+            | base64 --decode > /tmp/chapters-preview.tar.gz
+          echo "4c22b719a6e6356cb6baba8f19a5a19d2bc1d38d97ec452fdd112f2f62bb2295  /tmp/chapters-preview.tar.gz" | sha256sum --check
+          mkdir -p public/chapters
+          tar -xzf /tmp/chapters-preview.tar.gz -C public/chapters
+
       - name: Yayın klasörünü hazırla
         run: |
-          mkdir -p public
           cp index.html public/index.html
+          cp chapter.html public/chapter.html
           cp mevzuat-rag.js public/mevzuat-rag.js
           cp turkce-eslesme.js public/turkce-eslesme.js
-          python3 - <<'PY'
-          from pathlib import Path
-
-          page = Path("public/index.html")
-          html = page.read_text(encoding="utf-8")
-          tags = [
-              '<script src="mevzuat-rag.js?v=2"></script>',
-              '<script src="turkce-eslesme.js?v=2.1"></script>',
-          ]
-          for tag in tags:
-              if tag not in html:
-                  html = html.replace("</body>", f"{tag}</body>")
-          page.write_text(html, encoding="utf-8")
-          PY
+          cp web-research.js public/web-research.js
           touch public/.nojekyll
+
+      - name: Yayın paketini denetle
+        run: |
+          test -f public/index.html
+          test -f public/chapter.html
+          test -f public/chapters/index.json
+          test "$(find public/chapters -maxdepth 1 -name '[0-9][0-9].json' | wc -l)" -eq 24
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for path in Path('public/chapters').glob('*.json'):
+              json.loads(path.read_text(encoding='utf-8'))
+          print('24 bölüm verisi ve dizin doğrulandı')
+          PY
+          node --check public/mevzuat-rag.js
+          node --check public/turkce-eslesme.js
+          node --check public/web-research.js
 
       - name: GitHub Pages yapılandırması
         uses: actions/configure-pages@v5
