@@ -15,7 +15,16 @@ jobs:
         uses: actions/checkout@v6
       - name: Bölüm paketini aç
         run: |
-          cat content-pack/chapters.part.* | base64 --decode > /tmp/chapters-preview.tar.gz
+          cat \
+            content-pack/chapters.part.00 \
+            content-pack/chapters.part.01 \
+            content-pack/chapters.part.02fix.00 \
+            content-pack/chapters.part.02fix.01 \
+            content-pack/chapters.part.02fix.02 \
+            content-pack/chapters.part.02fix.03 \
+            content-pack/chapters.part.03 \
+            content-pack/chapters.part.04 \
+            | base64 --decode > /tmp/chapters-preview.tar.gz
           echo "4c22b719a6e6356cb6baba8f19a5a19d2bc1d38d97ec452fdd112f2f62bb2295  /tmp/chapters-preview.tar.gz" | sha256sum --check
           mkdir -p /tmp/chapters
           tar -xzf /tmp/chapters-preview.tar.gz -C /tmp/chapters
