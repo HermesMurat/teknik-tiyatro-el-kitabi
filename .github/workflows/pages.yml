@@ -62,6 +62,17 @@ jobs:
         run: |
           mkdir -p public
           cp index.html public/index.html
+          cp mevzuat-rag.js public/mevzuat-rag.js
+          python3 - <<'PY'
+          from pathlib import Path
+
+          page = Path("public/index.html")
+          html = page.read_text(encoding="utf-8")
+          tag = '<script src="mevzuat-rag.js?v=2"></script>'
+          if tag not in html:
+              html = html.replace("</body>", f"{tag}</body>")
+          page.write_text(html, encoding="utf-8")
+          PY
           touch public/.nojekyll
 
       - name: GitHub Pages yapılandırması
