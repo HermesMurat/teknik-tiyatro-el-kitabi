@@ -14,15 +14,22 @@ jobs:
       - name: Depoyu al
         uses: actions/checkout@v6
       - name: JavaScript sözdizimini denetle
-        run: node --check mevzuat-rag.js
+        run: |
+          node --check mevzuat-rag.js
+          node --check turkce-eslesme.js
       - name: Yayın enjeksiyonunu denetle
         run: |
           python3 - <<'PY'
           from pathlib import Path
           html = Path('index.html').read_text(encoding='utf-8')
-          tag = '<script src="mevzuat-rag.js?v=2"></script>'
+          tags = [
+              '<script src="mevzuat-rag.js?v=2"></script>',
+              '<script src="turkce-eslesme.js?v=2.1"></script>',
+          ]
           assert '</body>' in html
           assert Path('mevzuat-rag.js').exists()
-          assert tag not in html or html.count(tag) == 1
+          assert Path('turkce-eslesme.js').exists()
+          for tag in tags:
+              assert tag not in html or html.count(tag) == 1
           print('PASS')
           PY
