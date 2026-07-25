@@ -1,0 +1,28 @@
+name: Mevzuat RAG Testi
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Depoyu al
+        uses: actions/checkout@v6
+      - name: JavaScript sözdizimini denetle
+        run: node --check mevzuat-rag.js
+      - name: Yayın enjeksiyonunu denetle
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html = Path('index.html').read_text(encoding='utf-8')
+          tag = '<script src="mevzuat-rag.js?v=2"></script>'
+          assert '</body>' in html
+          assert Path('mevzuat-rag.js').exists()
+          assert tag not in html or html.count(tag) == 1
+          print('PASS')
+          PY
