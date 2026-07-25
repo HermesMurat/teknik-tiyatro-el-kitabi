@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -20,13 +20,53 @@ jobs:
     steps:
       - name: Depoyu al
         uses: actions/checkout@v6
+
+      - name: Pages durumunu denetle ve etkinleştirmeyi dene
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          api="${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/pages"
+          get_code=$(curl -sS -o pages-get.json -w "%{http_code}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "$api")
+
+          post_code="not-needed"
+          if [ "$get_code" = "404" ]; then
+            post_code=$(curl -sS -o pages-post.json -w "%{http_code}" \
+              -X POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "X-GitHub-Api-Version: 2026-03-10" \
+              "$api" \
+              -d '{"build_type":"workflow"}')
+          fi
+
+          {
+            echo "GET=$get_code"
+            echo "POST=$post_code"
+            echo "RUN=${GITHUB_RUN_ID}"
+          } > .pages-status.txt
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .pages-status.txt
+          if ! git diff --cached --quiet; then
+            git commit -m "Pages durumunu kaydet [skip ci]"
+            git push
+          fi
+
       - name: Yayın klasörünü hazırla
         run: |
           mkdir -p public
           cp index.html public/index.html
           touch public/.nojekyll
+
       - name: GitHub Pages yapılandırması
         uses: actions/configure-pages@v5
+
       - name: Site paketini yükle
         uses: actions/upload-pages-artifact@v4
         with:
