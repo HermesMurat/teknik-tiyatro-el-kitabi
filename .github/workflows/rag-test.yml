@@ -23,7 +23,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           html = Path('index.html').read_text(encoding='utf-8')
-          tags = ['<script src="rehber.js?v=4"></script>']
+          tags = ['<script src="rehber.js?v=5"></script>']
           assert '</body>' in html
           assert Path('rehber.js').exists()
           for tag in tags:
