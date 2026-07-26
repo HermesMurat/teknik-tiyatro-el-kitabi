@@ -67,6 +67,7 @@ jobs:
           cp mevzuat-rag.js public/mevzuat-rag.js
           cp turkce-eslesme.js public/turkce-eslesme.js
           cp web-research.js public/web-research.js
+          cp rehber.js public/rehber.js
           touch public/.nojekyll
 
       - name: Yayın paketini denetle
@@ -85,6 +86,7 @@ jobs:
           node --check public/mevzuat-rag.js
           node --check public/turkce-eslesme.js
           node --check public/web-research.js
+          node --check public/rehber.js
 
       - name: GitHub Pages yapılandırması
         uses: actions/configure-pages@v5

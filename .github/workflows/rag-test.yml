@@ -17,19 +17,16 @@ jobs:
         run: |
           node --check mevzuat-rag.js
           node --check turkce-eslesme.js
+          node --check rehber.js
       - name: Yayın enjeksiyonunu denetle
         run: |
           python3 - <<'PY'
           from pathlib import Path
           html = Path('index.html').read_text(encoding='utf-8')
-          tags = [
-              '<script src="mevzuat-rag.js?v=2"></script>',
-              '<script src="turkce-eslesme.js?v=2.1"></script>',
-          ]
+          tags = ['<script src="rehber.js?v=4"></script>']
           assert '</body>' in html
-          assert Path('mevzuat-rag.js').exists()
-          assert Path('turkce-eslesme.js').exists()
+          assert Path('rehber.js').exists()
           for tag in tags:
-              assert tag not in html or html.count(tag) == 1
+              assert html.count(tag) == 1
           print('PASS')
           PY
