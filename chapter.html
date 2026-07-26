@@ -38,6 +38,9 @@
     .ask-section{white-space:nowrap;font-size:12px;padding:6px 10px}
     .empty-section{color:var(--muted);font-style:italic}
     .source-note{margin-top:32px;padding:14px;border-left:4px solid var(--gold);background:#f7eedf;color:var(--muted)}
+    .source-card{display:grid;gap:5px;margin:12px 0;padding:15px 17px;border:1px solid var(--line);border-radius:12px;color:var(--ink);text-decoration:none;background:#fff}
+    .source-card:hover,.source-card:focus{border-color:var(--gold);box-shadow:0 8px 24px #5d493318}
+    .source-card span{color:var(--muted);font-size:14px}.source-card em{color:var(--red);font-style:normal;font-weight:800;font-size:13px}
     .nav{display:flex;justify-content:space-between;gap:12px;margin-top:34px}.nav a{flex:1;text-align:center}
     dialog{width:min(900px,96vw);border:0;border-radius:20px;padding:0;background:var(--paper);box-shadow:0 30px 100px #0006}
     dialog::backdrop{background:#201a17aa}
@@ -76,7 +79,7 @@
       <h1 id="title">Bölüm yükleniyor…</h1>
       <p class="subtitle" id="subtitle"></p>
       <div id="content"></div>
-      <div class="source-note">Bu dijital okuma, bölümdeki ana açıklamalar ve bütün bölüm başlıkları kullanılarak hazırlanmıştır. Kuruma özgü yürürlükteki talimat, risk değerlendirmesi ve güncel resmî mevzuat önceliklidir.</div>
+      <div class="source-note">Kaynakça ve mevzuat alanlarında yalnız Devlet Tiyatrolarına doğrudan ilişkin resmî bağlantılar gösterilir. Her kaynak kartı güncel metnin internet sayfasını açar.</div>
       <nav class="nav" id="nav"></nav>
     </article>
   </main>
@@ -84,7 +87,7 @@
 
   <dialog id="ai">
     <div class="dlghead">
-      <div><b>Bağlamlı Araştırma Rehberi</b><br><small>Bu bölümün tam metni, el kitabının tamamı ve güncel internet kaynakları</small></div>
+      <div><b>Bağlamlı Araştırma Rehberi</b><br><small>Bu bölümün tam metni, el kitabının tamamı ve resmî Devlet Tiyatroları kaynakları</small></div>
       <button class="btn secondary" id="closeAI">Kapat</button>
     </div>
     <div class="dlgbody" id="messages">
@@ -94,18 +97,18 @@
       <textarea id="question" maxlength="1200" rows="3" placeholder="Bu bölümdeki bir görev, risk, prosedür veya mevzuat konusunu sorun…"></textarea>
       <div class="modes">
         <label><input type="radio" name="mode" value="book"> Yalnız el kitabı</label>
-        <label><input type="radio" name="mode" value="hybrid" checked> El kitabı + internet</label>
-        <label><input type="radio" name="mode" value="general"> Genel araştırma</label>
+        <label><input type="radio" name="mode" value="hybrid" checked> El kitabı + DT kaynakları</label>
       </div>
-      <label class="status"><input id="officialOnly" type="checkbox" checked> Mevzuat sorularında yalnız resmî kaynakları kullan</label>
+      <div class="status">İnternet araştırması yalnız resmî Devlet Tiyatroları/Kültür ve Turizm Bakanlığı sayfalarıyla sınırlıdır.</div>
       <button class="btn" type="submit">Araştır ve yanıtla</button>
     </form>
   </dialog>
 
+  <script src="arama.js?v=6"></script>
   <script>
     const $ = (selector) => document.querySelector(selector);
     const escapeHTML = (value) => String(value ?? "").replace(/[&<>"]/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]));
-    const normalize = (value) => String(value ?? "").toLocaleLowerCase("tr-TR");
+    const normalize = window.TTEKArama.normalize;
     const id = Math.min(24, Math.max(1, Number(new URLSearchParams(location.search).get("id") || 1)));
     let activeChapter = null;
 
@@ -133,6 +136,13 @@
             flushBullets();
             if (block.type === "paragraph") html += `<p>${escapeHTML(block.text)}</p>`;
             if (block.type === "table") html += renderTable(block);
+            if (block.type === "source") {
+              html += `<a class="source-card" href="${escapeHTML(block.url)}" target="_blank" rel="noopener noreferrer">
+                <b>${escapeHTML(block.title)}</b>
+                <span>${escapeHTML(block.note || "Resmî kaynağı aç")}</span>
+                <em>Resmî kaynağa git ↗</em>
+              </a>`;
+            }
           }
         });
         flushBullets();
@@ -153,8 +163,8 @@
       let body = "";
       chapter.sections.forEach((section, index) => {
         const sectionId = `section-${index}`;
-        const text = [...(section.paragraphs || []), ...(section.bullets || []), ...((section.tables || []).flatMap((table) => [...(table.headers || []), ...(table.rows || []).flat()]))].join(" ");
-        const prompt = `${chapter.title} içindeki “${section.title}” başlığını el kitabındaki tam metne ve gerekiyorsa güncel internet kaynaklarına dayanarak açıkla.`;
+        const text = [...(section.paragraphs || []), ...(section.bullets || []), ...((section.tables || []).flatMap((table) => [...(table.headers || []), ...(table.rows || []).flat()])), ...((section.blocks || []).filter((block) => block.type === "source").flatMap((source) => [source.title, source.note]))].join(" ");
+        const prompt = `${chapter.title} içindeki “${section.title}” başlığını el kitabındaki tam metne ve resmî Devlet Tiyatroları kaynaklarına dayanarak açıkla.`;
         toc += `<a href="#${sectionId}" data-level="${section.level || 2}">${escapeHTML(section.title)}</a>`;
         body += `
           <section class="section level-${section.level || 2}" id="${sectionId}" data-search="${escapeHTML(normalize(`${section.title} ${text}`))}">
@@ -189,10 +199,10 @@
 
     function applyChapterSearch() {
       if (!activeChapter) return;
-      const query = normalize($("#chapterSearch").value.trim());
+      const query = $("#chapterSearch").value.trim();
       let matches = 0;
       document.querySelectorAll(".section").forEach((section) => {
-        const visible = !query || section.dataset.search.includes(query);
+        const visible = !query || window.TTEKArama.matches(section.dataset.search, query);
         section.hidden = !visible;
         if (visible) matches += 1;
       });
@@ -226,6 +236,6 @@
       $("#progress").style.width = `${height ? (scrollY / height) * 100 : 0}%`;
     });
   </script>
-  <script src="rehber.js?v=5"></script>
+  <script src="rehber.js?v=6"></script>
 </body>
 </html>
