@@ -56,7 +56,7 @@ jobs:
             content-pack/chapters.part.03 \
             content-pack/chapters.part.04 \
             | base64 --decode > /tmp/chapters-preview.tar.gz
-          echo "9bcf6bc314342bbcc4b4a4eed845d370a0fed2172f717888f8bff815850e17ab  /tmp/chapters-preview.tar.gz" | sha256sum --check
+          echo "1e543a97d5da8ebd02f1be64cc2be8adb5c2937f414c72b27b14869cc24fdc35  /tmp/chapters-preview.tar.gz" | sha256sum --check
           mkdir -p public/chapters
           tar -xzf /tmp/chapters-preview.tar.gz -C public/chapters
 
@@ -64,9 +64,7 @@ jobs:
         run: |
           cp index.html public/index.html
           cp chapter.html public/chapter.html
-          cp mevzuat-rag.js public/mevzuat-rag.js
-          cp turkce-eslesme.js public/turkce-eslesme.js
-          cp web-research.js public/web-research.js
+          cp arama.js public/arama.js
           cp rehber.js public/rehber.js
           touch public/.nojekyll
 
@@ -83,9 +81,7 @@ jobs:
               json.loads(path.read_text(encoding='utf-8'))
           print('24 bölüm verisi ve dizin doğrulandı')
           PY
-          node --check public/mevzuat-rag.js
-          node --check public/turkce-eslesme.js
-          node --check public/web-research.js
+          node --check public/arama.js
           node --check public/rehber.js
 
       - name: GitHub Pages yapılandırması
