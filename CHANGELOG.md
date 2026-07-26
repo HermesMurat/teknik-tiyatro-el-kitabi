@@ -2,6 +2,11 @@
 
 ## 26 Temmuz 2026
 
+- 24 özgün bölüm belgesi yeniden işlendi; 1.375 başlık, 121.510 kelime ve bütün tablolar dijital okuyucuya aktarıldı.
+- Yalnız adı görünen boş alt başlıklar kaldırıldı; her başlık kendi açıklama, madde ve tablolarıyla birlikte açılır hale getirildi.
+- Ana sayfa araması bölüm adlarıyla sınırlı olmaktan çıkarıldı; bütün metinlerde arama ve doğrudan ilgili yazıya gitme eklendi.
+- Bölüm içinde arama ve “Tüm yazıları göster” seçenekleri eklendi.
+- Yapay zekâ rehberinin tablo içeriklerini de kaynak metin olarak kullanması sağlandı.
 - Ana sayfadaki bölüm kartlarının tamamı tıklanabilir hale getirildi.
 - Her bölümün ve alt başlığın tam metni okunabilir, doğrudan yapay zekâ rehberine sorulabilir hale getirildi.
 - Rehberin yalnız bölüm adı ve alt başlığı taraması kaldırıldı; 24 bölümün gerçek metninde bağlam araması eklendi.
