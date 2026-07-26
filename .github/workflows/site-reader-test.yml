@@ -50,9 +50,12 @@ jobs:
           test -f mevzuat-rag.js
           test -f turkce-eslesme.js
           test -f web-research.js
-          grep -q 'Bölümü oku' index.html
+          test -f rehber.js
+          grep -q 'Bölümü aç ve oku' index.html
           grep -q 'chapters/' chapter.html
-          grep -q 'Kitap + internet' index.html
+          grep -q 'El kitabı + internet' index.html
+          grep -q 'Bu kısmı sor' chapter.html
           node --check mevzuat-rag.js
           node --check turkce-eslesme.js
           node --check web-research.js
+          node --check rehber.js
