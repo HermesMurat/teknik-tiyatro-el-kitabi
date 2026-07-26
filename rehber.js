@@ -1,4 +1,4 @@
-/* Tiyatro Teknik Müdürlüğü El Kitabı · Bağlamlı araştırma rehberi v4 */
+/* Tiyatro Teknik Müdürlüğü El Kitabı · Bağlamlı araştırma rehberi v5 */
 (() => {
   "use strict";
 
@@ -195,11 +195,22 @@
     state.currentSection = section || null;
   }
 
+  function sectionFullText(section) {
+    return [
+      ...(section.paragraphs || []),
+      ...(section.bullets || []),
+      ...((section.tables || []).flatMap((table) => [
+        ...(table.headers || []),
+        ...(table.rows || []).flat(),
+      ])),
+    ].join(" ");
+  }
+
   function handbookSegments(chapters) {
     const result = [];
     for (const chapter of chapters) {
       chapter.sections.forEach((section, sectionIndex) => {
-        const text = [...(section.paragraphs || []), ...(section.bullets || [])].join(" ");
+        const text = sectionFullText(section);
         if (!text.trim()) return;
         result.push({
           chapter: chapter.number,
