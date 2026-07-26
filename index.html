@@ -67,7 +67,7 @@
       <div>
         <div class="eyebrow">Açık erişimli teknik başvuru sistemi</div>
         <h1>Tiyatro Teknik Müdürlüğü El Kitabı</h1>
-        <p class="lead">Bir bölüme basarak tam metnini okuyun; el kitabının tamamında veya güncel internet kaynaklarında araştırma yapın.</p>
+        <p class="lead">Bir bölüme basarak tam metnini okuyun; el kitabının tamamında ve resmî Devlet Tiyatroları kaynaklarında araştırma yapın.</p>
       </div>
       <div class="stats">
         <div><strong id="chapterStat">24</strong>bölüm</div><div><strong id="wordStat">—</strong>kelime</div>
@@ -85,32 +85,32 @@
     </div>
     <section class="grid" id="grid"></section>
   </main>
-  <footer>Hazırlayan: Murat Gülmez · Genel mesleki başvuru kaynağıdır. Güncel resmî mevzuat ve kurumun onaylı prosedürleri önceliklidir.</footer>
+  <footer>Hazırlayan: Murat Gülmez · Sitedeki kaynakça ve mevzuat bağlantıları yalnız Devlet Tiyatrolarına ilişkin resmî metinlerden oluşur.</footer>
 
   <dialog id="ai">
     <div class="dlghead">
-      <div><b>Bağlamlı Araştırma Rehberi</b><br><small>El kitabının tam metni, güncel resmî mevzuat ve genel internet kaynakları</small></div>
+      <div><b>Bağlamlı Araştırma Rehberi</b><br><small>El kitabının tam metni ve resmî Devlet Tiyatroları kaynakları</small></div>
       <button class="btn secondary" id="closeAI">Kapat</button>
     </div>
     <div class="dlgbody" id="messages">
-      <div class="msg">Bir teknik durum, görev, mevzuat veya genel bilgi sorusu sorun. Rehber önce ilgili bölüm metinlerini bulur; “Kitap + internet” seçiliyken güncel kaynakları da araştırıp tek yanıtta birleştirir.</div>
+      <div class="msg">Bir teknik durum, görev veya Devlet Tiyatroları mevzuatı hakkında sorun. Rehber ilgili bölüm metinlerini ve yalnız resmî Devlet Tiyatroları kaynaklarını birlikte tarar.</div>
     </div>
     <form class="ai-form" id="aiForm">
       <textarea id="question" maxlength="1200" rows="3" placeholder="Örn. Sahne motorunun periyodik kontrol süresi geçmişse temsil yapılabilir mi?"></textarea>
       <div class="modes">
         <label><input type="radio" name="mode" value="book"> Yalnız el kitabı</label>
-        <label><input type="radio" name="mode" value="hybrid" checked> El kitabı + internet</label>
-        <label><input type="radio" name="mode" value="general"> Genel araştırma</label>
+        <label><input type="radio" name="mode" value="hybrid" checked> El kitabı + DT kaynakları</label>
       </div>
-      <label class="status"><input id="officialOnly" type="checkbox" checked> Mevzuat sorularında yalnız resmî kaynakları kullan</label>
+      <div class="status">İnternet araştırması yalnız resmî Devlet Tiyatroları/Kültür ve Turizm Bakanlığı sayfalarıyla sınırlıdır.</div>
       <button class="btn" type="submit">Araştır ve yanıtla</button>
     </form>
   </dialog>
 
+  <script src="arama.js?v=6"></script>
   <script>
     const $ = (selector) => document.querySelector(selector);
     const escapeHTML = (value) => String(value ?? "").replace(/[&<>"]/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]));
-    const normalize = (value) => String(value ?? "").toLocaleLowerCase("tr-TR");
+    const normalize = window.TTEKArama.normalize;
     let meta = [];
     const chapterCache = new Map();
 
@@ -142,7 +142,7 @@
               <p>${escapeHTML(chapter.subtitle || "Bölümün kapsamı, uygulama ilkeleri, prosedürleri ve kurum araçları.")}</p>
               <div class="actions">
                 <span class="read">Bölümü aç ve oku →</span>
-                <button class="btn secondary" type="button" data-ask-context="Bölüm ${chapter.number} ${escapeHTML(chapter.title)} hakkında, el kitabındaki tam metni ve güncel kaynakları kullanarak bilgi ver.">Rehbere sor</button>
+                <button class="btn secondary" type="button" data-ask-context="Bölüm ${chapter.number} ${escapeHTML(chapter.title)} hakkında, el kitabındaki tam metni ve resmî Devlet Tiyatroları kaynaklarını kullanarak bilgi ver.">Rehbere sor</button>
               </div>
             </article>`).join("")
         : '<div class="empty">Eşleşen bölüm bulunamadı.</div>';
@@ -163,11 +163,12 @@
         ...(section.paragraphs || []),
         ...(section.bullets || []),
         ...((section.tables || []).flatMap((table) => [...(table.headers || []), ...(table.rows || []).flat()])),
+        ...((section.blocks || []).filter((block) => block.type === "source").flatMap((source) => [source.title, source.note])),
       ].join(" ");
     }
 
     async function searchAllContent() {
-      const query = normalize($("#search").value.trim());
+      const query = $("#search").value.trim();
       if (!query) { render(); return; }
       $("#count").textContent = "Bütün bölüm metinleri aranıyor…";
       const chapters = await Promise.all(meta.map((item) => loadChapter(item.number)));
@@ -177,11 +178,13 @@
         if (category && categoryOf(chapter.number) !== category) return;
         chapter.sections.forEach((section, sectionIndex) => {
           const complete = sectionText(section);
-          if (!normalize(complete).includes(query)) return;
-          const normalizedText = normalize(complete);
-          const start = Math.max(0, normalizedText.indexOf(query) - 90);
-          const raw = complete.slice(start, start + 310);
-          matches.push({ chapter, section, sectionIndex, snippet: `${start ? "…" : ""}${raw}${raw.length === 310 ? "…" : ""}` });
+          if (!window.TTEKArama.matches(complete, query)) return;
+          matches.push({
+            chapter,
+            section,
+            sectionIndex,
+            snippet: window.TTEKArama.snippet(complete, query),
+          });
         });
       });
       $("#count").textContent = `${matches.length} ilgili yazı bulundu`;
@@ -216,6 +219,6 @@
     $("#category").addEventListener("change", () => $("#search").value.trim() ? searchAllContent() : render());
     $("#clear").addEventListener("click", () => { $("#search").value = ""; $("#category").value = ""; render(); });
   </script>
-  <script src="rehber.js?v=5"></script>
+  <script src="rehber.js?v=6"></script>
 </body>
 </html>
