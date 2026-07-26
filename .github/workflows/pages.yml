@@ -56,7 +56,7 @@ jobs:
             content-pack/chapters.part.03 \
             content-pack/chapters.part.04 \
             | base64 --decode > /tmp/chapters-preview.tar.gz
-          echo "4c22b719a6e6356cb6baba8f19a5a19d2bc1d38d97ec452fdd112f2f62bb2295  /tmp/chapters-preview.tar.gz" | sha256sum --check
+          echo "9bcf6bc314342bbcc4b4a4eed845d370a0fed2172f717888f8bff815850e17ab  /tmp/chapters-preview.tar.gz" | sha256sum --check
           mkdir -p public/chapters
           tar -xzf /tmp/chapters-preview.tar.gz -C public/chapters
 

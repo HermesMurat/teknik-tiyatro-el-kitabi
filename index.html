@@ -34,6 +34,7 @@
     .card-link:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
     .num{color:var(--red);font-weight:900}.cat{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
     .card h3{font-size:21px;margin:.45em 0}.card p{color:var(--muted);font-size:14px;flex:1}
+    .match{display:inline-block;background:#f1e2c7;color:#6c4512;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:800;margin-bottom:8px}
     .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;position:relative;z-index:2;pointer-events:none}
     .actions .read{font-weight:800;color:var(--red)}.actions button{pointer-events:auto}
     .empty{text-align:center;grid-column:1/-1;padding:40px;color:var(--muted)}
@@ -69,8 +70,8 @@
         <p class="lead">Bir bölüme basarak tam metnini okuyun; el kitabının tamamında veya güncel internet kaynaklarında araştırma yapın.</p>
       </div>
       <div class="stats">
-        <div><strong>24</strong>bölüm</div><div><strong>130K+</strong>kelime</div>
-        <div><strong>1.500+</strong>başlık</div><div><strong>7/24</strong>erişim</div>
+        <div><strong id="chapterStat">24</strong>bölüm</div><div><strong id="wordStat">—</strong>kelime</div>
+        <div><strong id="headingStat">—</strong>başlık</div><div><strong>7/24</strong>erişim</div>
       </div>
     </section>
     <form class="search" id="searchForm">
@@ -111,6 +112,7 @@
     const escapeHTML = (value) => String(value ?? "").replace(/[&<>"]/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]));
     const normalize = (value) => String(value ?? "").toLocaleLowerCase("tr-TR");
     let meta = [];
+    const chapterCache = new Map();
 
     function categoryOf(number) {
       if (number <= 4) return "Yönetim";
@@ -121,11 +123,9 @@
     }
 
     function filtered() {
-      const query = normalize($("#search").value.trim());
       const category = $("#category").value;
       return meta.filter((chapter) =>
-        (!category || categoryOf(chapter.number) === category) &&
-        (!query || normalize(`${chapter.title} ${chapter.subtitle}`).includes(query))
+        (!category || categoryOf(chapter.number) === category)
       );
     }
 
@@ -148,20 +148,74 @@
         : '<div class="empty">Eşleşen bölüm bulunamadı.</div>';
     }
 
+    async function loadChapter(number) {
+      if (chapterCache.has(number)) return chapterCache.get(number);
+      const response = await fetch(`chapters/${String(number).padStart(2, "0")}.json`);
+      if (!response.ok) throw new Error(String(response.status));
+      const chapter = await response.json();
+      chapterCache.set(number, chapter);
+      return chapter;
+    }
+
+    function sectionText(section) {
+      return [
+        section.title,
+        ...(section.paragraphs || []),
+        ...(section.bullets || []),
+        ...((section.tables || []).flatMap((table) => [...(table.headers || []), ...(table.rows || []).flat()])),
+      ].join(" ");
+    }
+
+    async function searchAllContent() {
+      const query = normalize($("#search").value.trim());
+      if (!query) { render(); return; }
+      $("#count").textContent = "Bütün bölüm metinleri aranıyor…";
+      const chapters = await Promise.all(meta.map((item) => loadChapter(item.number)));
+      const category = $("#category").value;
+      const matches = [];
+      chapters.forEach((chapter) => {
+        if (category && categoryOf(chapter.number) !== category) return;
+        chapter.sections.forEach((section, sectionIndex) => {
+          const complete = sectionText(section);
+          if (!normalize(complete).includes(query)) return;
+          const normalizedText = normalize(complete);
+          const start = Math.max(0, normalizedText.indexOf(query) - 90);
+          const raw = complete.slice(start, start + 310);
+          matches.push({ chapter, section, sectionIndex, snippet: `${start ? "…" : ""}${raw}${raw.length === 310 ? "…" : ""}` });
+        });
+      });
+      $("#count").textContent = `${matches.length} ilgili yazı bulundu`;
+      $("#grid").innerHTML = matches.length
+        ? matches.map(({ chapter, section, sectionIndex, snippet }) => `
+          <article class="card">
+            <a class="card-link" href="chapter.html?id=${chapter.number}#section-${sectionIndex}" aria-label="${escapeHTML(section.title)} yazısını aç"></a>
+            <div class="num">BÖLÜM ${chapter.number}</div>
+            <div class="cat">${escapeHTML(chapter.title)}</div>
+            <h3>${escapeHTML(section.title)}</h3>
+            <div><span class="match">Tam metinde eşleşti</span></div>
+            <p>${escapeHTML(snippet)}</p>
+            <div class="actions"><span class="read">İlgili yazıyı aç →</span></div>
+          </article>`).join("")
+        : '<div class="empty">Bölüm başlıklarında, açıklamalarda, maddelerde veya tablolarda eşleşen içerik bulunamadı.</div>';
+    }
+
     fetch("chapters/index.json")
       .then((response) => response.json())
       .then((data) => {
         meta = data;
+        $("#chapterStat").textContent = data.length;
+        $("#wordStat").textContent = `${Math.round(data.reduce((sum, chapter) => sum + (chapter.wordCount || 0), 0) / 1000)}K+`;
+        $("#headingStat").textContent = data.reduce((sum, chapter) => sum + (chapter.sectionCount || 0), 0).toLocaleString("tr-TR");
         [...new Set(data.map((chapter) => categoryOf(chapter.number)))]
           .forEach((category) => $("#category").add(new Option(category, category)));
         render();
       })
       .catch(() => { $("#count").textContent = "Bölüm verisi yüklenemedi"; });
 
-    $("#searchForm").addEventListener("submit", (event) => { event.preventDefault(); render(); });
-    $("#category").addEventListener("change", render);
+    $("#searchForm").addEventListener("submit", (event) => { event.preventDefault(); searchAllContent().catch(() => { $("#count").textContent = "Arama tamamlanamadı"; }); });
+    $("#category").addEventListener("change", () => $("#search").value.trim() ? searchAllContent() : render());
     $("#clear").addEventListener("click", () => { $("#search").value = ""; $("#category").value = ""; render(); });
   </script>
-  <script src="rehber.js?v=4"></script>
+  <script src="rehber.js?v=5"></script>
 </body>
 </html>
