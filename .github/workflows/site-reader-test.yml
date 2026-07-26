@@ -25,7 +25,7 @@ jobs:
             content-pack/chapters.part.03 \
             content-pack/chapters.part.04 \
             | base64 --decode > /tmp/chapters-preview.tar.gz
-          echo "4c22b719a6e6356cb6baba8f19a5a19d2bc1d38d97ec452fdd112f2f62bb2295  /tmp/chapters-preview.tar.gz" | sha256sum --check
+          echo "9bcf6bc314342bbcc4b4a4eed845d370a0fed2172f717888f8bff815850e17ab  /tmp/chapters-preview.tar.gz" | sha256sum --check
           mkdir -p /tmp/chapters
           tar -xzf /tmp/chapters-preview.tar.gz -C /tmp/chapters
       - name: Bölümleri doğrula
@@ -41,7 +41,9 @@ jobs:
               assert data['number'] == number
               assert data['title']
               assert data['sections']
-          print('24 bölüm doğrulandı')
+              assert all(section.get('blocks') for section in data['sections'])
+          assert sum(item['wordCount'] for item in index) > 100000
+          print('24 bölüm ve eksiksiz içerik doğrulandı')
           PY
       - name: Web dosyalarını doğrula
         run: |
@@ -52,9 +54,11 @@ jobs:
           test -f web-research.js
           test -f rehber.js
           grep -q 'Bölümü aç ve oku' index.html
+          grep -q 'searchAllContent' index.html
           grep -q 'chapters/' chapter.html
           grep -q 'El kitabı + internet' index.html
           grep -q 'Bu kısmı sor' chapter.html
+          grep -q 'Tüm yazıları göster' chapter.html
           node --check mevzuat-rag.js
           node --check turkce-eslesme.js
           node --check web-research.js
