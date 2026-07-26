@@ -1,97 +1,85 @@
-/* Tiyatro Teknik Müdürlüğü El Kitabı · Bağlamlı araştırma rehberi v5 */
+/* Tiyatro Teknik Müdürlüğü El Kitabı · DT kaynaklı araştırma rehberi v6 */
 (() => {
   "use strict";
 
   const OFFICIAL_HOSTS = [
-    "mevzuat.gov.tr",
-    "resmigazete.gov.tr",
-    "csgb.gov.tr",
-    "ktb.gov.tr",
+    "teftis.ktb.gov.tr",
     "devtiyatro.gov.tr",
-    "kvkk.gov.tr",
-    "ihale.gov.tr",
-    "aile.gov.tr",
-    "csb.gov.tr",
-    "telifhaklari.gov.tr",
   ];
 
-  const LAW_SOURCES = [
+  const DT_SOURCES = [
     {
-      title: "6331 sayılı İş Sağlığı ve Güvenliği Kanunu",
-      area: "İş sağlığı ve güvenliği",
-      articles: "Özellikle md. 4, 10, 11, 12, 16, 17 ve 19",
-      url: "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.6331.pdf",
-      keys: "iş sağlığı güvenliği isg risk tehlike kaza ramak çalışan işveren eğitim temsil prova",
-      summary: "Risklerin önlenmesi, risk değerlendirmesi, acil durum, bilgilendirme ve eğitim yükümlülüklerini düzenler.",
-      action: "İşe özgü risk değerlendirmesini, görevlendirmeyi ve kontrol tedbirlerini doğrulayın.",
-      high: true,
-    },
-    {
-      title: "İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği",
-      area: "İş ekipmanı",
-      articles: "md. 5–11 ve EK-III",
-      url: "https://www.mevzuat.gov.tr/",
-      keys: "ekipman makine motor vinç kaldırma truss caraskal ceraskal platform periyodik kontrol muayene bakım arıza elektrik",
-      summary: "Ekipmanın işe uygun, güvenli ve bakımlı olmasını; gerekli kontrollerin yetkili kişilerce yapılmasını düzenler.",
-      action: "Kontrol raporunu, kapsamını, tarihini, uygunsuzlukları ve hizmete dönüş kararını yazılı doğrulayın.",
-      high: true,
-    },
-    {
-      title: "Binaların Yangından Korunması Hakkında Yönetmelik",
-      area: "Yangın ve tahliye",
-      articles: "Kaçış yolları, acil çıkışlar, algılama, söndürme ve tahliye hükümleri",
-      url: "https://www.mevzuat.gov.tr/",
-      keys: "yangın duman alev tahliye acil çıkış kaçış yolu dekor perde sprinkler söndürücü seyirci kapasite",
-      summary: "Kaçış yolları ile yangın güvenlik sistemlerinin erişilebilir, işler ve kullanıma hazır tutulmasını düzenler.",
-      action: "Kaçış yolunu ve güvenlik sistemlerini engelleyen durumu kaldırmadan alanı kullanıma açmayın.",
-      high: true,
+      title: "5441 Sayılı Devlet Tiyatroları Personeli Hakkında Kanun",
+      area: "Devlet Tiyatroları kurumsal ve personel dayanağı",
+      articles: "Güncel resmî metin",
+      url: "https://teftis.ktb.gov.tr/TR-14212/5441-sayili-devlet-tiyatrolari-personeli-hakkinda-kanun.html",
+      keys: "devlet tiyatroları kanun kuruluş personel sanatkar sanatçı sahne uygulatıcı sözleşme",
+      summary: "Devlet Tiyatrolarının kurumsal ve personel yapısına ilişkin özel kanundur.",
+      action: "İlgili işlemi güncel 5441 sayılı Kanun metni ve kurumun yetki zinciri üzerinden doğrulayın.",
     },
     {
       title: "Devlet Tiyatroları Görev ve Çalışma Yönergesi",
       area: "Görev, yetki ve organizasyon",
-      articles: "İlgili birim ve görev tanımları",
-      url: "https://teftis.ktb.gov.tr/TR-264219/devlet-tiyatrolari-gorev-ve-calisma-yonergesi.html",
-      keys: "devlet tiyatroları görev yetki sorumluluk sanat teknik müdür teknik müdür başrealizatör kondüvit sahne amiri atölye turne",
+      articles: "Birim ve görev tanımları",
+      url: "https://teftis.ktb.gov.tr/TR-264533/devlet-tiyatrolari-gorev-ve-calisma-yonergesi.html",
+      keys: "devlet tiyatroları görev yetki sorumluluk sanat teknik müdür teknik müdür başrealizatör dekoratör kondüvit sahne amiri atölye turne",
       summary: "Devlet Tiyatrolarındaki birimlerin, yöneticilerin ve teknik görevlerin kurumsal sorumluluk çerçevesini belirler.",
       action: "İşlem ve onayı, güncel görev tanımında belirtilen yetki zinciri üzerinden yazılı yürütün.",
     },
     {
-      title: "6698 sayılı Kişisel Verilerin Korunması Kanunu",
-      area: "Kişisel veri",
-      articles: "Özellikle md. 4, 5, 6, 10 ve 12",
-      url: "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.6698.pdf",
-      keys: "kvkk kişisel veri fotoğraf video kamera kayıt prova oyuncu çalışan sağlık telefon paylaşım açık rıza aydınlatma",
-      summary: "Kişisel verinin hukuki sebebe, belirli amaca ve ölçülülük ilkesine göre işlenmesini ve korunmasını düzenler.",
-      action: "Amaç, hukuki sebep, aydınlatma, erişim ve saklama süresini paylaşım öncesinde doğrulayın.",
+      title: "Devlet Tiyatroları Genel Müdürlüğü İş Sağlığı ve Güvenliği Yönergesi",
+      area: "Devlet Tiyatrolarında iş sağlığı ve güvenliği",
+      articles: "DT kurum içi İSG hükümleri",
+      url: "https://teftis.ktb.gov.tr/TR-436464/devlet-tiyatrolari-genel-mudurlugu-is-sagligi-ve-guvenligi-yonergesi.html",
+      keys: "devlet tiyatroları iş sağlığı güvenliği isg risk tehlike kaza acil eğitim temsil prova ekipman",
+      summary: "Devlet Tiyatroları Genel Müdürlüğündeki iş sağlığı ve güvenliği uygulamalarını düzenler.",
+      action: "Risk ve güvenlik kararını DT İSG Yönergesi ile kurumun onaylı risk değerlendirmesi üzerinden doğrulayın.",
       high: true,
     },
     {
-      title: "5846 sayılı Fikir ve Sanat Eserleri Kanunu",
-      area: "Fikrî haklar",
-      articles: "İşleme md. 21, çoğaltma md. 22, yayma md. 23, temsil md. 24",
-      url: "https://www.mevzuat.gov.tr/mevzuatmetin/1.3.5846.pdf",
-      keys: "telif eser temsil uyarlama işleme müzik görsel video yayın kayıt çoğaltma tasarım lisans çeviri",
-      summary: "Eserin işlenmesi, çoğaltılması, yayılması, temsili ve farklı mecralarda kullanılmasına ilişkin hakları düzenler.",
-      action: "Hak sahibi, mecra, süre, bölge, temsil, kayıt ve yayın izinlerini ayrı ayrı kontrol edin.",
-      high: true,
+      title: "Devlet Tiyatroları Genel Müdürlüğü Fikri Hak Alımları Yönergesi",
+      area: "Devlet Tiyatrolarında fikrî hak alımı",
+      articles: "DT fikrî hak alım süreci",
+      url: "https://teftis.ktb.gov.tr/TR-264280/devlet-tiyatrolari-genel-mudurlugu-fikri-hak-alimlari-yonergesi.html",
+      keys: "devlet tiyatroları fikri hak telif eser temsil uyarlama işleme müzik tasarım çeviri",
+      summary: "Devlet Tiyatroları Genel Müdürlüğünün fikrî hak alım süreçlerini düzenler.",
+      action: "Hak alımını DT Fikri Hak Alımları Yönergesindeki görev, onay ve belge düzenine göre doğrulayın.",
     },
     {
-      title: "4734 ve 4735 sayılı kamu alımı mevzuatı",
-      area: "Kamu alımı",
-      articles: "İhtiyaç, teknik şartname, ihale, sözleşme ve kabul süreçleri",
-      url: "https://www.ihale.gov.tr/Mevzuat.aspx?AnaSayfa=true",
-      keys: "ihale satın alma doğrudan temin teknik şartname yaklaşık maliyet muayene kabul teslim yüklenici sözleşme malzeme hizmet",
-      summary: "Kamu alımının ihtiyaç tanımından sözleşme ve kabule kadar olan idari ve teknik çerçevesini düzenler.",
-      action: "İhtiyacı ölçülebilir performans, güvenlik, teslim, test ve kabul ölçütleriyle tanımlayın.",
+      title: "Devlet Tiyatroları Genel Müdürlüğü Salon ve Sahne Tahsis Yönergesi",
+      area: "Salon ve sahne tahsisi",
+      articles: "DT tahsis esasları",
+      url: "https://teftis.ktb.gov.tr/TR-264282/devlet-tiyatrolari-genel-mudurlugu-salon-ve-sahne-tahsis-yonergesi.html",
+      keys: "devlet tiyatroları salon sahne tahsis etkinlik kullanım temsil prova",
+      summary: "Devlet Tiyatroları salon ve sahnelerinin tahsis esaslarını düzenler.",
+      action: "Tahsis talebini DT Salon ve Sahne Tahsis Yönergesindeki koşul ve onaylara göre doğrulayın.",
     },
     {
-      title: "5378 sayılı Engelliler Hakkında Kanun ve erişilebilirlik mevzuatı",
-      area: "Erişilebilirlik",
-      articles: "Umuma açık yapılar, hizmetler, izleme ve denetim",
-      url: "https://www.aile.gov.tr/eyhgm/mevzuat/ulusal-mevzuat/",
-      keys: "erişilebilirlik engelli tekerlekli sandalye rampa işitme görme altyazı işaret dili sesli betimleme refakatçi tahliye",
-      summary: "Umuma açık yapı ve hizmetlerde bağımsız, güvenli ve eşit erişimin sağlanmasına ilişkin çerçeveyi belirler.",
-      action: "Seyirci, çalışan ve sanatçı yolculuğunu girişten güvenli çıkışa kadar birlikte değerlendirin.",
+      title: "Devlet Tiyatroları Genel Müdürlüğü Ön Mali Kontrol İşlemleri Yönergesi",
+      area: "Ön mali kontrol",
+      articles: "DT ön mali kontrol süreci",
+      url: "https://teftis.ktb.gov.tr/TR-264284/devlet-tiyatrolari-genel-mudurlugu-on-mali-kontrol-islemleri-yonergesi.html",
+      keys: "devlet tiyatroları mali kontrol satın alma ödeme taahhüt bütçe",
+      summary: "Devlet Tiyatroları Genel Müdürlüğünün ön mali kontrol işlemlerini düzenler.",
+      action: "Mali işlemi DT Ön Mali Kontrol İşlemleri Yönergesindeki kontrol ve onaylara göre yürütün.",
+    },
+    {
+      title: "Devlet Tiyatroları Genel Müdürlüğü İç Denetim Yönergesi",
+      area: "İç denetim",
+      articles: "DT iç denetim çerçevesi",
+      url: "https://teftis.ktb.gov.tr/TR-264283/devlet-tiyatrolari-genel-mudurlugu-ic-denetim-yonergesi.html",
+      keys: "devlet tiyatroları iç denetim kontrol risk rapor uygunluk",
+      summary: "Devlet Tiyatroları Genel Müdürlüğündeki iç denetim faaliyetlerinin çerçevesini belirler.",
+      action: "Denetim ve kontrol sürecini DT İç Denetim Yönergesindeki görev ve raporlama düzenine göre doğrulayın.",
+    },
+    {
+      title: "Devlet Tiyatroları Genel Müdürlüğü Saymanlığı ile Ayniyat Saymanlığı Hesap Usulleri Hakkında Yönetmelik",
+      area: "Muhasebe ve ayniyat",
+      articles: "DT hesap ve ayniyat işlemleri",
+      url: "https://teftis.ktb.gov.tr/TR-263917/devlet-tiyatrolari-genel-mudurlugu-saymanligi-ile-ayniyat-saymanligi-hesap-usulleri-hakkinda-yonetmelik.html",
+      keys: "devlet tiyatroları saymanlık ayniyat hesap ambar malzeme muhasebe envanter",
+      summary: "Devlet Tiyatroları Genel Müdürlüğü ve tiyatro müdürlüklerinin muhasebe ve ayniyat işlemlerini düzenler.",
+      action: "Hesap ve ayniyat işlemini DT'ye özgü yönetmelik hükümleri üzerinden doğrulayın.",
     },
   ];
 
@@ -203,6 +191,9 @@
         ...(table.headers || []),
         ...(table.rows || []).flat(),
       ])),
+      ...((section.blocks || [])
+        .filter((block) => block.type === "source")
+        .flatMap((source) => [source.title, source.note])),
     ].join(" ");
   }
 
@@ -244,7 +235,7 @@
 
   function searchLaws(question, limit = 4) {
     const queryTokens = tokens(question);
-    return LAW_SOURCES
+    return DT_SOURCES
       .map((source) => ({
         ...source,
         score: scoreText(
@@ -310,10 +301,8 @@
   }
 
   async function searchJina(question, officialOnly, legal) {
-    const officialScope = legal
-      ? " (site:mevzuat.gov.tr OR site:resmigazete.gov.tr OR site:csgb.gov.tr OR site:ktb.gov.tr OR site:kvkk.gov.tr OR site:ihale.gov.tr OR site:aile.gov.tr)"
-      : "";
-    const query = `${question}${officialOnly ? officialScope : ""}`;
+    const officialScope = " (site:teftis.ktb.gov.tr OR site:devtiyatro.gov.tr)";
+    const query = `Devlet Tiyatroları ${question}${officialScope}`;
     const encoded = encodeURIComponent(query);
     const gateways = [
       `https://s.jina.ai/?q=${encoded}`,
@@ -333,32 +322,6 @@
     }
     if (lastError) throw lastError;
     return [];
-  }
-
-  async function searchWikipedia(question) {
-    const url = new URL("https://tr.wikipedia.org/w/api.php");
-    url.search = new URLSearchParams({
-      origin: "*",
-      action: "query",
-      format: "json",
-      generator: "search",
-      gsrlimit: "4",
-      prop: "extracts|info",
-      inprop: "url",
-      exintro: "1",
-      explaintext: "1",
-      gsrsearch: question,
-    });
-    const response = await timedFetch(url.toString(), 12000);
-    const json = await response.json();
-    return Object.values(json.query?.pages || {})
-      .sort((a, b) => (a.index || 0) - (b.index || 0))
-      .slice(0, 4)
-      .map((item) => ({
-        title: item.title,
-        url: item.fullurl,
-        snippet: String(item.extract || "").slice(0, 800),
-      }));
   }
 
   async function readSource(result, question) {
@@ -387,19 +350,11 @@
       results = [];
     }
 
-    if (legal) {
-      const known = lawMatches.map(({ title, url, summary }) => ({ title, url, snippet: summary }));
-      results = [...results, ...known];
-    } else if (!officialOnly && results.length < 3) {
-      try {
-        results = [...results, ...(await searchWikipedia(question))];
-      } catch {
-        // The source list below remains usable.
-      }
-    }
+    const known = lawMatches.map(({ title, url, summary }) => ({ title, url, snippet: summary }));
+    results = [...results, ...known];
 
     const unique = [...new Map(results.filter((item) => item.url).map((item) => [item.url, item])).values()]
-      .filter((item) => !officialOnly || isOfficialURL(item.url))
+      .filter((item) => isOfficialURL(item.url))
       .slice(0, 6);
     return Promise.all(unique.map((item) => readSource(item, question)));
   }
@@ -489,10 +444,10 @@
 
   function renderEvidenceAnswer(question, bookResults, lawResults, webResults) {
     const lead = lawResults.length
-      ? `Soru en güçlü biçimde <b>${escapeHTML(lawResults[0].area)}</b> alanına giriyor. Aşağıdaki değerlendirme el kitabındaki ilgili metin, kayıtlı mevzuat eşleşmesi ve erişilebilen güncel internet kaynaklarının birlikte okunmasıyla oluşturuldu.`
+      ? `Soru en güçlü biçimde <b>${escapeHTML(lawResults[0].area)}</b> alanına giriyor. Aşağıdaki değerlendirme el kitabındaki ilgili metin ve resmî Devlet Tiyatroları kaynaklarının birlikte okunmasıyla oluşturuldu.`
       : bookResults.length
-        ? "El kitabında soruyla doğrudan ilişkili metinler bulundu. İnternet kaynakları ayrıca tarandı; kesin karar gerektiren durumda kurumun güncel prosedürü ve yetkili görüşü kontrol edilmelidir."
-        : "El kitabında güçlü bir eşleşme bulunmadı. Aşağıdaki sonuçlar genel internet araştırmasına dayanıyor.";
+        ? "El kitabında soruyla doğrudan ilişkili metinler bulundu. Resmî Devlet Tiyatroları kaynakları ayrıca tarandı; kesin karar gerektiren durumda kurumun güncel prosedürü ve yetkili görüşü kontrol edilmelidir."
+        : "El kitabında güçlü bir eşleşme bulunmadı. Aşağıdaki sonuçlar resmî Devlet Tiyatroları kaynaklarıyla sınırlıdır.";
     const critical = isCritical(question, lawResults)
       ? '<div class="rag-alert"><b>Güvenlik kararı:</b> Ciddi ve yakın tehlike, çalışmayan güvenlik sistemi, süresi geçmiş zorunlu kontrol veya belirsiz yetki varsa işe ya da temsile başlanmamalı; başladıysa çalışma güvenli biçimde durdurulmalıdır.</div>'
       : "";
@@ -512,7 +467,7 @@
           </div>`).join("")}`
       : "";
     const webCards = webResults.length
-      ? `<h4>Güncel internet araştırması</h4>${webResults.slice(0, 5).map((item, index) => `
+      ? `<h4>Resmî Devlet Tiyatroları kaynakları</h4>${webResults.slice(0, 5).map((item, index) => `
           <div class="evidence-card">
             <b>[W${index + 1}] ${escapeHTML(item.title)}</b>
             <p>${escapeHTML((item.snippet || "Kaynak bulundu; otomatik metin özeti alınamadı.").slice(0, 620))}</p>
@@ -549,17 +504,16 @@
 
   async function answer(question) {
     const mode = document.querySelector('input[name="mode"]:checked')?.value || "hybrid";
-    const officialOnly = $("#officialOnly")?.checked ?? true;
     addMessage("user", question);
-    const thinking = addMessage("assistant", "El kitabının tam metni ve güncel kaynaklar araştırılıyor…", false, "research-thinking");
+    const thinking = addMessage("assistant", "El kitabının tam metni ve resmî Devlet Tiyatroları kaynakları araştırılıyor…", false, "research-thinking");
 
     try {
-      const bookResults = mode === "general" ? await searchHandbook(question, 3) : await searchHandbook(question, 7);
+      const bookResults = await searchHandbook(question, 7);
       const lawResults = searchLaws(question);
       const legal = isLegalQuestion(question, lawResults);
       const webResults = mode === "book"
         ? []
-        : await researchWeb(question, legal ? officialOnly : false, legal, lawResults);
+        : await researchWeb(question, true, legal, lawResults);
       if (thinking) thinking.textContent = "Bulunan kaynaklar birlikte değerlendiriliyor…";
       const modelAnswer = await synthesize(question, bookResults, lawResults, webResults);
       thinking?.remove();
