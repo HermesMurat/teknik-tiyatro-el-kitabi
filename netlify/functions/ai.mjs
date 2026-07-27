@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 
 const OPENAI_URL = "https://api.openai.com/v1/responses";
-const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
+const GEMINI_INTERACTIONS_URL = "https://generativelanguage.googleapis.com/v1beta/interactions";
 const officialDomains = new Set(["teftis.ktb.gov.tr", "devtiyatro.gov.tr"]);
 const rateLimits = new Map();
 
@@ -111,8 +111,11 @@ function contextSources(context) {
 }
 
 function extractGeminiResult(response, context) {
-  const answer = (response?.candidates?.[0]?.content?.parts ?? [])
-    .map((part) => part?.text || "")
+  const answer = (response?.steps ?? [])
+    .filter((step) => step?.type === "model_output")
+    .flatMap((step) => step?.content ?? [])
+    .filter((content) => content?.type === "text")
+    .map((content) => content?.text || "")
     .join("\n")
     .trim();
   return { answer, sources: contextSources(context) };
@@ -192,21 +195,25 @@ Ciddi ve yakın tehlike, yangın, kaldırma ekipmanı, elektrik, rigging veya ac
 
     if (useGemini) {
       provider = "gemini";
-      const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+      const model = process.env.GEMINI_MODEL || "gemini-flash-lite-latest";
+      const transcript = conversation.map((message) => (
+        `${message.role === "assistant" ? "REHBER" : "KULLANICI"}:\n${String(message.content || "")}`
+      )).join("\n\n");
       const geminiBody = {
-        systemInstruction: {
-          parts: [{ text: instructions }],
-        },
-        contents: input.map((message) => ({
-          role: message.role === "assistant" ? "model" : "user",
-          parts: [{ text: message.content }],
-        })),
-        generationConfig: {
+        model,
+        system_instruction: instructions,
+        input: [
+          transcript,
+          context ? `EL KİTABI KANIT PAKETİ:\n${context}` : "",
+          `SORU:\n${question}`,
+        ].filter(Boolean).join("\n\n"),
+        store: false,
+        generation_config: {
           temperature: 0.2,
-          maxOutputTokens: 2200,
+          max_output_tokens: 2200,
         },
       };
-      response = await fetch(`${GEMINI_BASE_URL}/${encodeURIComponent(model)}:generateContent`, {
+      response = await fetch(GEMINI_INTERACTIONS_URL, {
         method: "POST",
         signal: controller.signal,
         headers: {
