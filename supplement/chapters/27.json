@@ -1,0 +1,86 @@
+{
+  "number": 27,
+  "title": "Oyuncular, Prova ve Temsil Disiplini",
+  "subtitle": "Oyuncunun sanatsal hazırlığı, çağrı düzeni, sahne güvenliği ve teknik ekiple iletişimi.",
+  "wordCount": 1020,
+  "sectionCount": 9,
+  "sections": [
+    {
+      "title": "Oyuncunun temel sorumluluk alanı",
+      "level": 1,
+      "blocks": [
+        {"type": "paragraph", "text": "Oyuncu, görevlendirildiği rolün sanatsal hazırlığını yapar; prova ve temsil düzenine, yetkili sanatsal yönlendirmeye ve iş sağlığı-güvenliği kurallarına uyar. Rol çalışması, sahne üzerindeki fiziksel riskleri görmezden gelme yükümlülüğü doğurmaz."}
+      ]
+    },
+    {
+      "title": "Çağrı, devam ve gecikme",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Prova ve temsil çağrıları tek bir doğrulanabilir kanaldan yayımlanmalı; saat, yer, çalışılacak sahne ve özel hazırlık ihtiyacı açık olmalıdır."},
+        {"type": "bullet", "text": "Gecikme veya katılamama durumu mümkün olan en erken zamanda yetkili kişiye bildirilir."},
+        {"type": "bullet", "text": "Son dakika değişikliği, ilgili bütün oyuncu ve birimlere ulaştığı teyit edilmeden yürürlüğe konulmamalıdır."}
+      ]
+    },
+    {
+      "title": "Prova öncesi kişisel kontrol",
+      "level": 2,
+      "blocks": [
+        {"type": "bullet", "text": "Kullanılacak kostüm, ayakkabı, maske, peruk ve kişisel aksesuar kontrol edilir."},
+        {"type": "bullet", "text": "Hareketi etkileyen sağlık durumu veya yeni sakatlık mahremiyet korunarak yetkili kişiye bildirilir."},
+        {"type": "bullet", "text": "Silah, ateş, duman, yüksekte çalışma, uçuş, hareketli dekor veya karanlık geçiş varsa özel prova yapılmadan uygulanmaz."}
+      ]
+    },
+    {
+      "title": "Oyuncu–teknik ekip iletişimi",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Teknik sorunlar doğrudan kişisel tartışmaya dönüştürülmeden sahne amiri, reji asistanı veya belirlenmiş iletişim zinciri üzerinden aktarılmalıdır. Oyuncu, teknik düzenekte kendi başına değişiklik yapmamalı; teknik ekip de oyuncu hareketini habersizce etkileyecek düzenleme yapmamalıdır."},
+        {"type": "table", "headers": ["Durum", "Doğru kanal"], "rows": [
+          ["Sahne üstü acil tehlike", "En yakın yetkiliyi uyar, hareketi güvenle durdur"],
+          ["Kostüm/aksesuar sorunu", "Kostüm/aksesuar sorumlusu ve sahne amiri"],
+          ["Mizansen değişikliği", "Rejisör/reji asistanı, ardından teknik teyit"],
+          ["Temsil sırası işaret sorunu", "Kondüvit veya belirlenmiş çağrı sorumlusu"]
+        ]}
+      ]
+    },
+    {
+      "title": "Sahne güvenliği",
+      "level": 2,
+      "blocks": [
+        {"type": "bullet", "text": "Karanlıkta geçiş, çukur, seviye farkı ve hareketli mekanizma prova edilir."},
+        {"type": "bullet", "text": "Dekor üzerine çıkma, oturma veya asılma yalnız tasarlanan kullanım ve taşıma kapasitesi içinde yapılır."},
+        {"type": "bullet", "text": "Koruyucu önlem sanatsal görünüş gerekçesiyle izinsiz çıkarılmaz."},
+        {"type": "bullet", "text": "Temsil sırasında yeni bir risk oluşursa işaret zinciri kullanılarak güvenli durum sağlanır."}
+      ]
+    },
+    {
+      "title": "Kostüm, makyaj ve kişisel veriler",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Ölçü, sağlık, alerji ve benzeri kişisel bilgiler yalnız iş için gerekli ölçüde ve yetkili kişilerce işlenmelidir. Ortak ürünlerin hijyen planı, prova/temsil sonrası teslimi ve hasar bildirimi belirlenmelidir."}
+      ]
+    },
+    {
+      "title": "Fotoğraf, kayıt ve sosyal medya",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Prova salonu ve sahne arkası görüntüleri; kurum politikası, fikrî haklar, kişisel veriler ve yapım gizliliği gözetilmeden yayımlanmamalıdır. Bireysel paylaşım izni, kurumsal tanıtım onayı yerine geçmez."}
+      ]
+    },
+    {
+      "title": "Temsil sonrası bildirim",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Ramak kala olay, teknik aksaklık, kostüm/dekor hasarı veya sanatsal bütünlüğü etkileyen durum temsil bitiminde ilgili kayıt sistemine bildirilir. Küçük görünen tekrar eden sorunlar eğilim oluşturabileceğinden kayda alınmalıdır."}
+      ]
+    },
+    {
+      "title": "Resmî dayanak",
+      "level": 2,
+      "blocks": [
+        {"type": "source", "title": "Devlet Tiyatroları Görev ve Çalışma Yönergesi", "note": "Sanatkârlar, rejisörlük, prova ve temsil düzeniyle ilgili kurumsal görev çerçevesi.", "url": "https://teftis.ktb.gov.tr/TR-264533/devlet-tiyatrolari-gorev-ve-calisma-yonergesi.html"},
+        {"type": "source", "title": "Devlet Tiyatroları Genel Müdürlüğü İş Sağlığı ve Güvenliği Yönergesi", "note": "Güncel metne Bakanlığın resmî yönergeler dizininden erişin.", "url": "https://teftis.ktb.gov.tr/TR-264212/yonergeler.html"}
+      ]
+    }
+  ]
+}
