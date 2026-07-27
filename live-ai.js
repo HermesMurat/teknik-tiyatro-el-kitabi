@@ -7,8 +7,10 @@
       ? 'https://teknik-tiyatro-el-kitabi.netlify.app/api/ai'
       : '/api/ai'
   );
+  const PUTER_SRC = 'https://js.puter.com/v2/';
   const history = [];
   const localAnswer = window.TTEKRehber?.answer || null;
+  let puterLoader = null;
 
   function escapeHtml(value) {
     return String(value ?? '').replace(/[&<>"']/g, (ch) => ({
@@ -73,21 +75,84 @@
       : '';
   }
 
+  function loadPuter() {
+    if (window.puter?.ai?.chat) return Promise.resolve(window.puter);
+    if (puterLoader) return puterLoader;
+    puterLoader = new Promise((resolve, reject) => {
+      const existing = document.querySelector(`script[src="${PUTER_SRC}"]`);
+      const script = existing || document.createElement('script');
+      const timer = setTimeout(() => reject(new Error('Ücretsiz model yüklenemedi.')), 15000);
+      script.addEventListener('load', () => {
+        clearTimeout(timer);
+        if (window.puter?.ai?.chat) resolve(window.puter);
+        else reject(new Error('Ücretsiz model başlatılamadı.'));
+      }, { once: true });
+      script.addEventListener('error', () => {
+        clearTimeout(timer);
+        reject(new Error('Ücretsiz model bağlantısı kurulamadı.'));
+      }, { once: true });
+      if (!existing) {
+        script.src = PUTER_SRC;
+        script.async = true;
+        document.head.appendChild(script);
+      }
+    });
+    return puterLoader;
+  }
+
+  function puterText(response) {
+    const content = response?.message?.content;
+    if (typeof content === 'string') return content.trim();
+    if (Array.isArray(content)) {
+      return content.map((part) => (
+        typeof part === 'string' ? part : part?.text || ''
+      )).join('\n').trim();
+    }
+    return typeof response?.text === 'string' ? response.text.trim() : '';
+  }
+
+  async function askPuter(question, context) {
+    await loadPuter();
+    const messages = [{
+      role: 'system',
+      content: `Sen Türkiye Cumhuriyeti Devlet Tiyatrolarında teknik yönetim için çalışan bir uzman rehbersin.
+Önce verilen Tiyatro Teknik Müdürlüğü El Kitabı kanıt paketini kullan. Yalnız paketteki resmî Devlet Tiyatroları ve Kültür ve Turizm Bakanlığı kaynaklarına dayan. Kaynakta bulunmayan görev, yetki, süre, madde veya kurumsal uygulama uydurma.
+Yanıtı Türkçe yaz. Önce doğrudan değerlendirme yap; ardından "Dayanak", "İzlenecek yol" ve "Yetki ve yönlendirme" başlıklarını kullan. El kitabı kanıtlarını [K], mevzuat kanıtlarını [M] olarak göster. Ciddi güvenlik riskinde işi güvenli biçimde durdurmayı ve yetkili teknik/İSG değerlendirmesini öner. Hukuki mütalaa verdiğini iddia etme.`
+    }, ...history.slice(-6), {
+      role: 'user',
+      content: `${context ? `EL KİTABI VE RESMÎ KAYNAK KANIT PAKETİ:\n${context}\n\n` : ''}SORU:\n${question}`
+    }];
+    const response = await window.puter.ai.chat(messages, {
+      model: 'gemini-3.5-flash-lite',
+      temperature: 0.2,
+      max_tokens: 1800,
+    });
+    const answer = puterText(response);
+    if (!answer) throw new Error('Ücretsiz model boş yanıt verdi.');
+    return answer;
+  }
+
+  function renderAnswer(node, answer, mode, provider, sources = []) {
+    node.innerHTML = `<div class="research-answer"><p>${markdown(answer)}</p></div>${sourceList(sources)}<div class="notice"><strong>${escapeHtml(provider)} yanıtı</strong><br>Yanıt el kitabı bağlamı${mode === 'book' ? '' : ' ve güncel resmî Devlet Tiyatroları kaynakları'} kullanılarak oluşturuldu. Resmî metin ve kurumun yetkili kararı önceliklidir.</div>`;
+  }
+
   async function liveAnswer(question) {
     const q = String(question || '').trim();
     if (!q) return;
 
     const userMessage = addMessage(escapeHtml(q), 'user');
     const loading = addMessage('<strong>Canlı model araştırıyor…</strong><br><small>El kitabı ve güncel resmî kaynaklar birlikte inceleniyor.</small>');
+    const mode = document.querySelector('input[name="mode"]:checked')?.value || 'hybrid';
+    let context = '';
 
     try {
-      const mode = document.querySelector('input[name="mode"]:checked')?.value || 'hybrid';
+      context = await collectContext(q, mode);
       const response = await fetch(ENDPOINT, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
           question: q,
-          context: await collectContext(q, mode),
+          context,
           history: history.slice(-6),
           mode,
         }),
@@ -96,15 +161,22 @@
       if (!response.ok) throw new Error(data.error || 'Canlı model yanıt veremedi.');
 
       const provider = data.provider === 'gemini' ? 'Gemini ücretsiz katmanı' : 'canlı model';
-      loading.innerHTML = `<div class="research-answer"><p>${markdown(data.answer)}</p></div>${sourceList(data.sources)}<div class="notice"><strong>${escapeHtml(provider)} yanıtı</strong><br>Yanıt el kitabı bağlamı${mode === 'book' ? '' : ' ve güncel resmî Devlet Tiyatroları kaynakları'} kullanılarak oluşturuldu. Resmî metin ve kurumun yetkili kararı önceliklidir.</div>`;
+      renderAnswer(loading, data.answer, mode, provider, data.sources);
       history.push({ role: 'user', content: q }, { role: 'assistant', content: data.answer });
     } catch (error) {
-      if (localAnswer) {
-        userMessage?.remove();
-        loading?.remove();
-        try { await localAnswer(q); } catch (_) {}
-      } else {
-        loading.innerHTML = `<strong>Canlı model şu anda kullanılamıyor.</strong><br>${escapeHtml(error.message || error)}<div class="notice">Lütfen kısa süre sonra yeniden deneyin.</div>`;
+      try {
+        loading.innerHTML = '<strong>Ücretsiz Gemini modeline bağlanılıyor…</strong><br><small>API anahtarı gerektirmeyen canlı model hazırlanıyor.</small>';
+        const answer = await askPuter(q, context || await collectContext(q, mode));
+        renderAnswer(loading, answer, mode, 'Puter üzerinden ücretsiz Gemini');
+        history.push({ role: 'user', content: q }, { role: 'assistant', content: answer });
+      } catch (puterError) {
+        if (localAnswer) {
+          userMessage?.remove();
+          loading?.remove();
+          try { await localAnswer(q); } catch (_) {}
+        } else {
+          loading.innerHTML = `<strong>Canlı model şu anda kullanılamıyor.</strong><br>${escapeHtml(puterError.message || error.message || error)}<div class="notice">Lütfen kısa süre sonra yeniden deneyin.</div>`;
+        }
       }
     }
   }
@@ -114,5 +186,5 @@
   const button = document.querySelector('#openAI');
   if (button) button.textContent = 'Yapay zekâ ile ara';
   const header = document.querySelector('#ai .dlghead > div');
-  if (header) header.innerHTML = '<b>Canlı Teknik Rehber</b><br><small>Ücretsiz Gemini modeli + el kitabı + resmî Devlet Tiyatroları kaynakları</small>';
+  if (header) header.innerHTML = '<b>Canlı Teknik Rehber</b><br><small>Ücretsiz Gemini modeli + el kitabı + resmî Devlet Tiyatroları kaynakları · API anahtarı gerekmez</small>';
 })();
