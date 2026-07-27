@@ -1,0 +1,87 @@
+{
+  "number": 28,
+  "title": "Tiyatro ve İdare Müdürlüğü Uygulamaları",
+  "subtitle": "Taşra tiyatrosunda personel, yazışma, bina, bütçe, temsil ve teknik koordinasyonun günlük işleyişi.",
+  "wordCount": 508,
+  "sectionCount": 9,
+  "sections": [
+    {
+      "title": "İdare müdürlüğünün konumu",
+      "level": 1,
+      "blocks": [
+        {"type": "paragraph", "text": "İdare müdürlüğü; personel, tahakkuk, taşınır, satın alma, yazışma, bina ve destek hizmetlerini ilgili mevzuat ve verilen yetki çerçevesinde yürütür. Sanatsal veya teknik uzmanlık kararını tek başına üstlenmez; bu kararların idarî ve malî işleme dönüşmesini sağlar."}
+      ]
+    },
+    {
+      "title": "Tiyatro müdürü ile çalışma",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Tiyatro müdürü yerel birimin sanat, yönetim, malî ve teknik faaliyetlerinin koordinasyonundan Genel Müdürlüğe karşı sorumludur. İdare müdürü ve teknik müdür, kendi görev alanlarındaki risk ve ihtiyaçları karar verilebilir bir dosyayla tiyatro müdürüne sunar."},
+        {"type": "bullet", "text": "Sorun bildirimi; olay, etkisi, dayanağı, seçenekler ve önerilen kararı içermelidir."},
+        {"type": "bullet", "text": "Sözlü talimatın mali veya hukuki sonuç doğurduğu durumlarda yazılı teyit alınmalıdır."}
+      ]
+    },
+    {
+      "title": "Yıllık çalışma takvimi",
+      "level": 2,
+      "blocks": [
+        {"type": "table", "headers": ["Dönem", "İdarî odak", "Koordinasyon"], "rows": [
+          ["Sezon öncesi", "Kadro, bütçe, sözleşme, bina ve satın alma planı", "Sanat ve teknik birimler"],
+          ["Prova dönemi", "Çalışma çizelgesi, ihtiyaç ve teslim takibi", "Reji ve üretim ekipleri"],
+          ["Temsil dönemi", "Nöbet, fazla çalışma, salon ve seyirci hizmetleri", "Sahne/ön alan sorumluları"],
+          ["Turne", "Görevlendirme, konaklama, taşıma, harcırah", "Turne ve teknik sorumlular"],
+          ["Sezon sonu", "Envanter, bakım, arşiv ve değerlendirme", "Bütün birimler"]
+        ]}
+      ]
+    },
+    {
+      "title": "Personel ve görev kayıtları",
+      "level": 2,
+      "blocks": [
+        {"type": "bullet", "text": "Görevlendirme, izin, rapor, nöbet, prova ve temsil çizelgeleri yetkili sistemde tutulur."},
+        {"type": "bullet", "text": "Fiilî çalışma ile kaydın uyumsuzluğu gecikmeden düzeltilir."},
+        {"type": "bullet", "text": "Sağlık ve disiplin bilgilerine erişim, görev gereği ve ölçülülük ilkesiyle sınırlandırılır."}
+      ]
+    },
+    {
+      "title": "Bütçe ve satın alma koordinasyonu",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Birim ihtiyacı teknik şartnameye dönüşmeden önce bütçe tertibi, ödenek, harcama yetkisi, ihale yöntemi, yaklaşık maliyet ve termin kontrol edilir. Teknik birim ihtiyacı ve performans ölçütünü tanımlar; satın alma birimi işlemi mevzuata uygun yürütür."},
+        {"type": "bullet", "text": "Marka/model tarifinden kaçınılır; zorunluluk varsa hukuki dayanak ve 'veya dengi' yaklaşımı değerlendirilir."},
+        {"type": "bullet", "text": "Muayene-kabul, şartnamede ölçülebilir olmayan özellikleri sonradan varsayamaz."}
+      ]
+    },
+    {
+      "title": "Bina ve ortak alan yönetimi",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Yangın güvenliği, acil çıkışlar, asansörler, elektrik, iklimlendirme, su, güvenlik ve temizlik hizmetleri için sorumlular ile periyodik kontrol takvimi belirlenir. Sahneye özgü sistemler ile bina sistemlerinin kesişim noktası teknik müdürlükle birlikte yönetilir."}
+      ]
+    },
+    {
+      "title": "Temsil günü idarî kontrolü",
+      "level": 2,
+      "blocks": [
+        {"type": "bullet", "text": "Personel ve görevli listesi, bina açılışı ve güvenlik düzeni doğrulanır."},
+        {"type": "bullet", "text": "Seyirci kapasitesi, tahsis koşulları ve özel etkinlik kararları kontrol edilir."},
+        {"type": "bullet", "text": "Acil durumda karar ve iletişim zinciri erişilebilir tutulur."}
+      ]
+    },
+    {
+      "title": "Dosya standardı",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Her iş dosyasında talep, onay, bütçe, piyasa/ihale belgeleri, teknik şartname, sözleşme/sipariş, teslim, muayene-kabul, taşınır kaydı, fatura ve ödeme belgeleri birbiriyle ilişkilendirilmelidir."}
+      ]
+    },
+    {
+      "title": "Resmî dayanaklar",
+      "level": 2,
+      "blocks": [
+        {"type": "source", "title": "Tiyatro İdare Müdürlerinin Görev, Sorumluluk ve Yetkilerine Ait Çalışma Usul ve Esasları", "note": "Bakanlık Teftiş Kurulu resmî sayfası.", "url": "https://teftis.ktb.gov.tr/TR-264285/tiyatro-idare-mudurlerinin-gorev-sorumluluk-ve-yetkilerine-ait-calisma-usul-ve-esaslari.html"},
+        {"type": "source", "title": "Devlet Tiyatroları Görev ve Çalışma Yönergesi", "note": "Taşra tiyatro müdürlükleri ve birimler arası görev çerçevesi.", "url": "https://teftis.ktb.gov.tr/TR-264533/devlet-tiyatrolari-gorev-ve-calisma-yonergesi.html"}
+      ]
+    }
+  ]
+}

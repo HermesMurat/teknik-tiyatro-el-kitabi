@@ -1,0 +1,85 @@
+{
+  "number": 26,
+  "title": "Rejisörlük, Dramaturgi ve Sanatsal Hazırlık",
+  "subtitle": "Rejisör, reji asistanı ve dramaturgun prova, kayıt ve teknik üretimle kesişen çalışma düzeni.",
+  "wordCount": 468,
+  "sectionCount": 8,
+  "sections": [
+    {
+      "title": "Rejisörün çalışma çerçevesi",
+      "level": 1,
+      "blocks": [
+        {"type": "paragraph", "text": "Rejisör, görevlendirildiği eserin sanatsal yorumunu oluşturur, provaları yönetir ve sahneleme bütünlüğünü sağlar. Bu yetki; bütçe, iş güvenliği, telif, bina güvenliği ve teknik sistem sınırlarıyla birlikte kullanılır."},
+        {"type": "bullet", "text": "Sanatsal hedef mümkün olduğunca ölçülebilir teknik isteğe çevrilmelidir."},
+        {"type": "bullet", "text": "Değişiklikler sözlü kalmamalı; prova notu, çizim revizyonu veya karar kaydıyla izlenmelidir."}
+      ]
+    },
+    {
+      "title": "Reji asistanı",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Reji asistanı; prova akışını, reji notlarını, çağrıları, sahne değişikliklerini ve üretim birimlerine aktarılması gereken kararları düzenli biçimde kaydeder. Rejisörün sanatsal kararını teknik talimata dönüştürürken ilgili uzmanlık sorumlusuyla teyit kurar."},
+        {"type": "table", "headers": ["Kayıt", "Asgari içerik"], "rows": [
+          ["Prova raporu", "Tarih, katılım, çalışılan sahne, değişiklik, bekleyen karar"],
+          ["Reji notu", "Sahne/işaret, istenen sonuç, uygulama zamanı"],
+          ["Revizyon kaydı", "Eski karar, yeni karar, etkilediği birimler, onay"]
+        ]}
+      ]
+    },
+    {
+      "title": "Dramaturg ve metin çalışması",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Dramaturg; metin inceleme, bağlam araştırması, çeviri/uyarlama değerlendirmesi, repertuvar ve prova sürecinde sanatsal bilgi üretimi gibi görevlerde çalışır. Dramaturjik öneri ile bağlayıcı idarî ya da teknik talimat birbirinden ayrılmalıdır."},
+        {"type": "bullet", "text": "Metin sürümü ve değişiklik tarihi açıkça belirtilir."},
+        {"type": "bullet", "text": "Telif veya temsil hakkını etkileyebilecek uyarlamalar yetkili birimlere bildirilir."}
+      ]
+    },
+    {
+      "title": "İlk üretim toplantısı",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "İlk üretim toplantısına rejisör, reji asistanı, dramaturg, dekor-kostüm-ışık yaratıcıları, teknik müdürlük ve gerekli sahne/atölye sorumluları katılmalıdır."},
+        {"type": "bullet", "text": "Reji yaklaşımı, dekor hareketleri, oyuncu trafiği, efektler ve özel riskler açıklanır."},
+        {"type": "bullet", "text": "Teslim tarihleri ve karar kapıları takvime bağlanır."},
+        {"type": "bullet", "text": "Bütçe veya mekân nedeniyle araştırılması gereken alternatifler sahip ve tarih verilerek kaydedilir."}
+      ]
+    },
+    {
+      "title": "Prova türleri ve karar kapıları",
+      "level": 2,
+      "blocks": [
+        {"type": "table", "headers": ["Aşama", "Ana amaç", "Çıkış koşulu"], "rows": [
+          ["Masa başı", "Metin, rol, bağlam ve yorum birliği", "Kullanılan metin sürümü kesin"],
+          ["Sahne provası", "Mizansen, tempo ve oyuncu trafiği", "Temel yerleşim kayıtlı"],
+          ["Teknik prova", "Işık, ses, mekanik, dekor ve işaretler", "Riskler/işaretler onaylı"],
+          ["Genel prova", "Temsil koşullarının kesintisiz sınanması", "Açık kritik eksik yok"],
+          ["Prömiyer sonrası", "Sorun ve iyileştirme değerlendirmesi", "Revizyonlar kayıtlı"]
+        ]}
+      ]
+    },
+    {
+      "title": "Teknik değişiklik talebi",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Bir değişiklik, yalnızca 'rejisör istedi' notuyla üretime alınmamalıdır. İstenen sonuç, sahne numarası, ölçü/işlev, termin, bütçe ve güvenlik etkisi kaydedilir; teknik uygunluk ilgili sorumlularca değerlendirilir."},
+        {"type": "bullet", "text": "Kritik değişikliklerde dekor, ışık, ses, kostüm ve oyuncu güvenliği birlikte gözden geçirilir."},
+        {"type": "bullet", "text": "Onaysız değişiklik temsil dosyasına işlenmez."}
+      ]
+    },
+    {
+      "title": "Temsil bütünlüğü ve devralma",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Prömiyerden sonra temsilin sanatsal bütünlüğü ile güvenli teknik tekrar edilebilirliği birlikte korunur. Reji defteri, kondüvit akışı, ışık-ses kayıtları, dekor değişim planı ve oyuncu çağrıları aynı sürümü göstermelidir."}
+      ]
+    },
+    {
+      "title": "Resmî dayanak",
+      "level": 2,
+      "blocks": [
+        {"type": "source", "title": "Devlet Tiyatroları Görev ve Çalışma Yönergesi", "note": "Rejisör, reji asistanı, dramaturg ve sanatsal birimlerin görevleri.", "url": "https://teftis.ktb.gov.tr/TR-264533/devlet-tiyatrolari-gorev-ve-calisma-yonergesi.html"}
+      ]
+    }
+  ]
+}

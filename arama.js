@@ -1,4 +1,4 @@
-/* Tiyatro Teknik Müdürlüğü El Kitabı · Türkçe tam metin araması */
+/* Devlet Tiyatroları Çalışma ve Uygulama Rehberi · Türkçe tam metin araması */
 (() => {
   "use strict";
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#17120f">
-  <title>Bölüm | Tiyatro Teknik Müdürlüğü El Kitabı</title>
+  <title>Bölüm | Devlet Tiyatroları Çalışma ve Uygulama Rehberi</title>
   <style>
     :root{--bg:#f3efe8;--paper:#fffdf8;--ink:#201a17;--muted:#71645c;--line:#d9cec2;--red:#962f2f;--gold:#b88331}
     *{box-sizing:border-box}html{scroll-behavior:smooth}
@@ -60,7 +60,7 @@
   <div class="progress" id="progress"></div>
   <header>
     <div class="bar">
-      <a class="brand" href="./">Teknik Tiyatro<small>Yaşayan el kitabı</small></a>
+      <a class="brand" href="./">Devlet Tiyatroları<small>Çalışma ve uygulama rehberi</small></a>
       <div><button class="btn secondary" onclick="print()">Yazdır</button> <button class="btn" id="openAI">Bu bölümü yapay zekâya sor</button></div>
     </div>
   </header>
@@ -79,15 +79,15 @@
       <h1 id="title">Bölüm yükleniyor…</h1>
       <p class="subtitle" id="subtitle"></p>
       <div id="content"></div>
-      <div class="source-note">Kaynakça ve mevzuat alanlarında yalnız Devlet Tiyatrolarına doğrudan ilişkin resmî bağlantılar gösterilir. Her kaynak kartı güncel metnin internet sayfasını açar.</div>
+      <div class="source-note">Kaynakça alanında konuya doğrudan ilişkin resmî kamu bağlantıları gösterilir. Her kaynak kartı güncel metnin internet sayfasını açar; işlem öncesinde metnin yürürlük durumu kontrol edilmelidir.</div>
       <nav class="nav" id="nav"></nav>
     </article>
   </main>
-  <footer>Tiyatro Teknik Müdürlüğü El Kitabı · Murat Gülmez</footer>
+  <footer>Devlet Tiyatroları Çalışma ve Uygulama Rehberi · Murat Gülmez</footer>
 
   <dialog id="ai">
     <div class="dlghead">
-      <div><b>Bağlamlı Araştırma Rehberi</b><br><small>Bu bölümün tam metni, el kitabının tamamı ve resmî Devlet Tiyatroları kaynakları</small></div>
+      <div><b>Bağlamlı Araştırma Rehberi</b><br><small>Bu bölümün tam metni, rehberin tamamı ve ilgili resmî kamu kaynakları</small></div>
       <button class="btn secondary" id="closeAI">Kapat</button>
     </div>
     <div class="dlgbody" id="messages">
@@ -97,9 +97,9 @@
       <textarea id="question" maxlength="1200" rows="3" placeholder="Bu bölümdeki bir görev, risk, prosedür veya mevzuat konusunu sorun…"></textarea>
       <div class="modes">
         <label><input type="radio" name="mode" value="book"> Yalnız el kitabı</label>
-        <label><input type="radio" name="mode" value="hybrid" checked> El kitabı + DT kaynakları</label>
+        <label><input type="radio" name="mode" value="hybrid" checked> Rehber + resmî kaynaklar</label>
       </div>
-      <div class="status">İnternet araştırması yalnız resmî Devlet Tiyatroları/Kültür ve Turizm Bakanlığı sayfalarıyla sınırlıdır.</div>
+      <div class="status">İnternet araştırması yalnız konuya doğrudan ilişkin resmî kamu kurumlarının sayfalarıyla sınırlıdır.</div>
       <button class="btn" type="submit">Araştır ve yanıtla</button>
     </form>
   </dialog>
@@ -109,7 +109,7 @@
     const $ = (selector) => document.querySelector(selector);
     const escapeHTML = (value) => String(value ?? "").replace(/[&<>"]/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]));
     const normalize = window.TTEKArama.normalize;
-    const id = Math.min(24, Math.max(1, Number(new URLSearchParams(location.search).get("id") || 1)));
+    const id = Math.min(30, Math.max(1, Number(new URLSearchParams(location.search).get("id") || 1)));
     let activeChapter = null;
 
     function renderTable(block) {
@@ -163,8 +163,8 @@
       let body = "";
       chapter.sections.forEach((section, index) => {
         const sectionId = `section-${index}`;
-        const text = [...(section.paragraphs || []), ...(section.bullets || []), ...((section.tables || []).flatMap((table) => [...(table.headers || []), ...(table.rows || []).flat()])), ...((section.blocks || []).filter((block) => block.type === "source").flatMap((source) => [source.title, source.note]))].join(" ");
-        const prompt = `${chapter.title} içindeki “${section.title}” başlığını el kitabındaki tam metne ve resmî Devlet Tiyatroları kaynaklarına dayanarak açıkla.`;
+        const text = [...(section.paragraphs || []), ...(section.bullets || []), ...((section.tables || []).flatMap((table) => [...(table.headers || []), ...(table.rows || []).flat()])), ...((section.blocks || []).flatMap((block) => block.type === "table" ? [...(block.headers || []), ...(block.rows || []).flat()] : [block.text, block.title, block.note]))].filter(Boolean).join(" ");
+        const prompt = `${chapter.title} içindeki “${section.title}” başlığını el kitabındaki tam metne ve ilgili resmî kamu kaynaklarına dayanarak açıkla.`;
         toc += `<a href="#${sectionId}" data-level="${section.level || 2}">${escapeHTML(section.title)}</a>`;
         body += `
           <section class="section level-${section.level || 2}" id="${sectionId}" data-search="${escapeHTML(normalize(`${section.title} ${text}`))}">
@@ -180,14 +180,14 @@
       $("#content").innerHTML = body;
       $("#nav").innerHTML = `
         ${chapter.number > 1 ? `<a class="btn secondary" href="chapter.html?id=${chapter.number - 1}">← Bölüm ${chapter.number - 1}</a>` : "<span></span>"}
-        ${chapter.number < 24 ? `<a class="btn" href="chapter.html?id=${chapter.number + 1}">Bölüm ${chapter.number + 1} →</a>` : ""}`;
+        ${chapter.number < 30 ? `<a class="btn" href="chapter.html?id=${chapter.number + 1}">Bölüm ${chapter.number + 1} →</a>` : ""}`;
 
       document.querySelectorAll("[data-section-index]").forEach((button) => {
         button.addEventListener("click", () => {
           const section = chapter.sections[Number(button.dataset.sectionIndex)];
           window.TTEKRehber?.setSection({
             ...section,
-            text: [...(section.paragraphs || []), ...(section.bullets || []), ...((section.tables || []).flatMap((table) => [...(table.headers || []), ...(table.rows || []).flat()]))].join(" "),
+            text: [...(section.paragraphs || []), ...(section.bullets || []), ...((section.tables || []).flatMap((table) => [...(table.headers || []), ...(table.rows || []).flat()])), ...((section.blocks || []).flatMap((block) => block.type === "table" ? [...(block.headers || []), ...(block.rows || []).flat()] : [block.text, block.title, block.note]))].filter(Boolean).join(" "),
           });
         });
       });
@@ -236,6 +236,6 @@
       $("#progress").style.width = `${height ? (scrollY / height) * 100 : 0}%`;
     });
   </script>
-  <script src="rehber.js?v=8"></script>
+  <script src="rehber.js?v=9"></script>
 </body>
 </html>
