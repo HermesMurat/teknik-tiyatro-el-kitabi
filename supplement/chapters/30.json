@@ -1,0 +1,82 @@
+{
+  "number": 30,
+  "title": "Ortak Çalışma, Etik ve Uyuşmazlık Yönetimi",
+  "subtitle": "Sanatsal, teknik ve idarî ekiplerin ortak dili; kayıt, etik, iletişim ve sorun çözme ilkeleri.",
+  "wordCount": 950,
+  "sectionCount": 8,
+  "sections": [
+    {
+      "title": "Ortak amaç",
+      "level": 1,
+      "blocks": [
+        {"type": "paragraph", "text": "Tiyatro üretimi, hiçbir meslek grubunun tek başına tamamlayamayacağı bir kamu hizmetidir. Sanatsal özgürlük, teknik doğruluk, çalışan ve seyirci güvenliği, bütçe disiplini ve kamu yararı aynı karar içinde dengelenmelidir."}
+      ]
+    },
+    {
+      "title": "Rol sınırları ve mesleki saygı",
+      "level": 2,
+      "blocks": [
+        {"type": "bullet", "text": "Sanatsal ekip sonucu tanımlar; teknik ekip güvenli ve uygulanabilir yöntemi geliştirir; idarî-malî ekip işlemin yasal ve bütçesel yolunu kurar."},
+        {"type": "bullet", "text": "Hiçbir unvan başka uzmanlığın güvenlik veya mesleki yeterlilik kararını gerekçesiz geçersiz saymamalıdır."},
+        {"type": "bullet", "text": "Eleştiri kişiye değil, işe, riske ve kanıta yöneltilmelidir."}
+      ]
+    },
+    {
+      "title": "Toplantı ve karar standardı",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Toplantı sonunda karar, sorumlu, tarih ve doğrulama ölçütü yazılmalıdır. 'Konuşuldu', 'gereği düşünüldü' veya 'bakılacak' ifadeleri tek başına uygulanabilir karar değildir."},
+        {"type": "table", "headers": ["İfade", "Daha iyi kayıt"], "rows": [
+          ["Dekor düzeltilecek", "Sağ portal 15 cm daraltılacak; dekor atölyesi; 12 Ekim; teknik provada kontrol"],
+          ["Bilgisayar alınacak", "İhtiyaç raporu ve envanter analizi hazırlanacak; teknik müdürlük; 5 Ağustos"],
+          ["Oyuncular dikkat edecek", "Karanlık geçiş işaretleri prova edilecek; reji asistanı/sahne amiri; bu akşam"]
+        ]}
+      ]
+    },
+    {
+      "title": "Uyuşmazlık çözme basamakları",
+      "level": 2,
+      "blocks": [
+        {"type": "bullet", "text": "Sorunu tek cümleyle ve kişiselleştirmeden tanımlayın."},
+        {"type": "bullet", "text": "Ortak hedefi ve değiştirilemeyen sınırları belirleyin."},
+        {"type": "bullet", "text": "En az iki uygulanabilir seçenek ve etkilerini yazın."},
+        {"type": "bullet", "text": "Kararı görevli/yetkili makama taşıyın ve sonucu kaydedin."},
+        {"type": "bullet", "text": "Güvenlik veya hukuka uygunluk çözülmediyse işi normal kabul etmeyin."}
+      ]
+    },
+    {
+      "title": "Etik ve çıkar çatışması",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Satın alma, görevlendirme, seçme, kabul ve ödeme süreçlerinde kişisel ilişki, hediye, menfaat veya dış iş bağlantısı kararın tarafsızlığını etkileyebilecekse durum yetkili makama bildirilmelidir."},
+        {"type": "bullet", "text": "Kamu kaynağı kişisel iş veya tanıtım için kullanılamaz."},
+        {"type": "bullet", "text": "Tedarikçiyle teknik görüşme şeffaf ve kayıtlı yürütülmelidir."}
+      ]
+    },
+    {
+      "title": "Ayrımcılık, taciz ve güvenli çalışma ortamı",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Prova ve sahne çalışmasının yoğunluğu; aşağılayıcı dil, ayrımcılık, taciz, misilleme veya sınır ihlalini normalleştirmez. Bildirim kanalları erişilebilir olmalı; mahremiyet ve tarafsız inceleme korunmalıdır."}
+      ]
+    },
+    {
+      "title": "Bilgi, belge ve yapım gizliliği",
+      "level": 2,
+      "blocks": [
+        {"type": "bullet", "text": "Kişisel veriler, yayımlanmamış metinler, dekor/kostüm tasarımları, bütçe ve satın alma belgeleri yalnız yetkili kişilerle paylaşılır."},
+        {"type": "bullet", "text": "Kurumsal dosya kişisel bulut hesabına veya izinsiz yapay zekâ hizmetine yüklenmez."},
+        {"type": "bullet", "text": "Sürüm, erişim ve yedekleme sorumluluğu belirlenir."}
+      ]
+    },
+    {
+      "title": "Kontrol ve resmî kaynaklar",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Bu genel ilkeler somut olayda görev yazısı, sözleşme, disiplin ve etik mevzuatı, iş sağlığı-güvenliği düzenlemeleri ve güncel kurum talimatlarıyla birlikte uygulanmalıdır."},
+        {"type": "source", "title": "Devlet Tiyatroları Görev ve Çalışma Yönergesi", "note": "Meslek ve birimlerin görev çerçevesi.", "url": "https://teftis.ktb.gov.tr/TR-264533/devlet-tiyatrolari-gorev-ve-calisma-yonergesi.html"},
+        {"type": "source", "title": "Kültür ve Turizm Bakanlığı yönergeler dizini", "note": "İSG, bilgi güvenliği, imza yetkileri ve diğer güncel kurum düzenlemeleri.", "url": "https://teftis.ktb.gov.tr/TR-264212/yonergeler.html"}
+      ]
+    }
+  ]
+}
