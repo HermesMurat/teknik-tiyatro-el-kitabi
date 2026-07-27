@@ -1,10 +1,14 @@
-/* Tiyatro Teknik Müdürlüğü El Kitabı · DT kaynaklı araştırma rehberi v6 */
+/* Devlet Tiyatroları Çalışma ve Uygulama Rehberi · resmî kaynaklı araştırma v7 */
 (() => {
   "use strict";
 
   const OFFICIAL_HOSTS = [
     "teftis.ktb.gov.tr",
     "devtiyatro.gov.tr",
+    "resmigazete.gov.tr",
+    "ihale.gov.tr",
+    "sbb.gov.tr",
+    "hmb.gov.tr",
   ];
 
   const DT_SOURCES = [
@@ -80,6 +84,33 @@
       keys: "devlet tiyatroları saymanlık ayniyat hesap ambar malzeme muhasebe envanter",
       summary: "Devlet Tiyatroları Genel Müdürlüğü ve tiyatro müdürlüklerinin muhasebe ve ayniyat işlemlerini düzenler.",
       action: "Hesap ve ayniyat işlemini DT'ye özgü yönetmelik hükümleri üzerinden doğrulayın.",
+    },
+    {
+      title: "Tiyatro İdare Müdürlerinin Görev, Sorumluluk ve Yetkilerine Ait Çalışma Usul ve Esasları",
+      area: "Tiyatro ve idare müdürlüğü",
+      articles: "İdarî görev ve yetki çerçevesi",
+      url: "https://teftis.ktb.gov.tr/TR-264285/tiyatro-idare-mudurlerinin-gorev-sorumluluk-ve-yetkilerine-ait-calisma-usul-ve-esaslari.html",
+      keys: "tiyatro müdürü idare müdürü görev sorumluluk yetki taşra personel bina bütçe satın alma",
+      summary: "Tiyatro idare müdürlerinin görev, sorumluluk ve yetkilerine ilişkin resmî çalışma esaslarıdır.",
+      action: "Somut işlemi kurumun güncel görev yazısı, imza yetkisi ve resmî yönerge metniyle birlikte doğrulayın.",
+    },
+    {
+      title: "Kültür ve Turizm Bakanlığı Bilgi İşlem Sistemleri Kullanımına İlişkin Yönerge",
+      area: "Bilgisayar, yazılım ve kurumsal ağ",
+      articles: "Madde 6, 9 ve 10",
+      url: "https://teftis.ktb.gov.tr/TR-264221/kultur-ve-turizm-bakanligi-bilgi-islem-sistemleri-kullanimina-iliskin-yonerge.html",
+      keys: "bilgisayar donanım yazılım bilgi işlem uygun görüş teknik şartname ağ dekoratör iş istasyonu satın alma",
+      summary: "Donanım ve yazılım alımında Bakanlık bilgi işlem koordinasyonunu, uygun görüşü ve kurumsal ağ kurallarını düzenler.",
+      action: "İhtiyacı ölçülebilir iş yüküyle gerekçelendirin; ilgili Bakanlık bilgi işlem biriminden teknik uygun görüş alın.",
+    },
+    {
+      title: "2024/7 Sayılı Tasarruf Tedbirleri Genelgesi",
+      area: "Bilgisayar ve demirbaş alımında geçici tasarruf kısıtı",
+      articles: "17 Mayıs 2024 tarihli Genelge",
+      url: "https://www.resmigazete.gov.tr/eskiler/2024/05/20240517-5.pdf",
+      keys: "bilgisayar demirbaş satın alma tasarruf tedbirleri cumhurbaşkanlığı izin zorunlu ihtiyaç 2024 2027",
+      summary: "Bilgisayar ve benzeri demirbaş alımlarını üç yıllık dönemde zorunlu ihtiyaç ve izin sürecine bağlayan Genelgedir.",
+      action: "İşlem tarihinde Genelgenin yürürlük durumunu, zorunluluk dosyasını ve kurumun güncel izin zincirini doğrulayın.",
     },
   ];
 
@@ -302,7 +333,7 @@
   }
 
   async function searchJina(question, officialOnly, legal) {
-    const officialScope = " (site:teftis.ktb.gov.tr OR site:devtiyatro.gov.tr)";
+    const officialScope = " (site:teftis.ktb.gov.tr OR site:devtiyatro.gov.tr OR site:resmigazete.gov.tr OR site:ihale.gov.tr OR site:sbb.gov.tr OR site:hmb.gov.tr)";
     const query = `Devlet Tiyatroları ${question}${officialScope}`;
     const encoded = encodeURIComponent(query);
     const gateways = [
@@ -398,7 +429,7 @@
         initialPrompts: [{
           role: "system",
           content:
-            "Sen tiyatro teknik yönetimi alanında Türkçe çalışan bir araştırma rehberisin. Yalnız verilen kanıtlara dayan; mevzuat maddesi, tarih, kurum kararı veya alıntı uydurma. Soruyu doğrudan yanıtla. Mevzuat sorularında Değerlendirme, Mevzuat dayanağı, İzlenecek yol, Yetki ve Kaynak sınırı başlıklarını kullan. Her önemli iddiayı [K1], [M1] veya [W1] biçiminde kanıta bağla. Çelişki veya güncellik belirsizliğini açıkça belirt. Ciddi ve yakın tehlikede işe başlanmamasını veya işin güvenli biçimde durdurulmasını açıkça yaz.",
+            "Sen Devlet Tiyatrolarının teknik, sanatsal ve idarî işleyişi alanında Türkçe çalışan bir araştırma rehberisin. Yalnız verilen kanıtlara dayan; mevzuat maddesi, tarih, kurum kararı veya alıntı uydurma. Soruyu doğrudan yanıtla. Mevzuat sorularında Değerlendirme, Mevzuat dayanağı, İzlenecek yol, Yetki ve Kaynak sınırı başlıklarını kullan. Her önemli iddiayı [K1], [M1] veya [W1] biçiminde kanıta bağla. Çelişki veya güncellik belirsizliğini açıkça belirt. Ciddi ve yakın tehlikede işe başlanmamasını veya işin güvenli biçimde durdurulmasını açıkça yaz.",
         }],
       });
     }
@@ -460,10 +491,10 @@
 
   function renderEvidenceAnswer(question, bookResults, lawResults, webResults) {
     const lead = lawResults.length
-      ? `Soru en güçlü biçimde <b>${escapeHTML(lawResults[0].area)}</b> alanına giriyor. Aşağıdaki değerlendirme el kitabındaki ilgili metin ve resmî Devlet Tiyatroları kaynaklarının birlikte okunmasıyla oluşturuldu.`
+      ? `Soru en güçlü biçimde <b>${escapeHTML(lawResults[0].area)}</b> alanına giriyor. Aşağıdaki değerlendirme el kitabındaki ilgili metin ve konuya doğrudan ilişkin resmî kamu kaynaklarının birlikte okunmasıyla oluşturuldu.`
       : bookResults.length
-        ? "El kitabında soruyla doğrudan ilişkili metinler bulundu. Resmî Devlet Tiyatroları kaynakları ayrıca tarandı; kesin karar gerektiren durumda kurumun güncel prosedürü ve yetkili görüşü kontrol edilmelidir."
-        : "El kitabında güçlü bir eşleşme bulunmadı. Aşağıdaki sonuçlar resmî Devlet Tiyatroları kaynaklarıyla sınırlıdır.";
+        ? "El kitabında soruyla doğrudan ilişkili metinler bulundu. İlgili resmî kamu kaynakları ayrıca tarandı; kesin karar gerektiren durumda kurumun güncel prosedürü ve yetkili görüşü kontrol edilmelidir."
+        : "El kitabında güçlü bir eşleşme bulunmadı. Aşağıdaki sonuçlar ilgili resmî kamu kaynaklarıyla sınırlıdır.";
     const critical = isCritical(question, lawResults)
       ? '<div class="rag-alert"><b>Güvenlik kararı:</b> Ciddi ve yakın tehlike, çalışmayan güvenlik sistemi, süresi geçmiş zorunlu kontrol veya belirsiz yetki varsa işe ya da temsile başlanmamalı; başladıysa çalışma güvenli biçimde durdurulmalıdır.</div>'
       : "";
@@ -483,7 +514,7 @@
           </div>`).join("")}`
       : "";
     const webCards = webResults.length
-      ? `<h4>Resmî Devlet Tiyatroları kaynakları</h4>${webResults.slice(0, 5).map((item, index) => `
+      ? `<h4>İlgili resmî kamu kaynakları</h4>${webResults.slice(0, 5).map((item, index) => `
           <div class="evidence-card">
             <b>[W${index + 1}] ${escapeHTML(item.title)}</b>
             <p>${escapeHTML((item.snippet || "Kaynak bulundu; otomatik metin özeti alınamadı.").slice(0, 620))}</p>
@@ -521,7 +552,7 @@
   async function answer(question) {
     const mode = document.querySelector('input[name="mode"]:checked')?.value || "hybrid";
     addMessage("user", question);
-    const thinking = addMessage("assistant", "El kitabının tam metni ve resmî Devlet Tiyatroları kaynakları araştırılıyor…", false, "research-thinking");
+    const thinking = addMessage("assistant", "Rehberin tam metni ve ilgili resmî kamu kaynakları araştırılıyor…", false, "research-thinking");
 
     try {
       const bookResults = await searchHandbook(question, 7);
