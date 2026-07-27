@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 
-process.env.OPENAI_API_KEY = "test-key";
-process.env.OPENAI_MODEL = "gpt-5.6-terra";
+process.env.GEMINI_API_KEY = "test-key";
+process.env.GEMINI_MODEL = "gemini-2.5-flash";
+delete process.env.OPENAI_API_KEY;
 
 const { handler } = await import("../netlify/functions/ai.mjs");
 
@@ -14,25 +15,20 @@ assert.equal(blocked.statusCode, 403);
 assert.equal(blocked.headers["access-control-allow-origin"], undefined);
 
 let requestBody = null;
-globalThis.fetch = async (_url, options) => {
+let requestUrl = null;
+globalThis.fetch = async (url, options) => {
+  requestUrl = String(url);
   requestBody = JSON.parse(options.body);
   return {
     ok: true,
     status: 200,
     async json() {
       return {
-        id: "resp_test",
-        output: [{
-          type: "message",
-          content: [{
-            type: "output_text",
-            text: "Kaynaklara dayalı canlı yanıt.",
-            annotations: [{
-              type: "url_citation",
-              title: "Devlet Tiyatroları Görev ve Çalışma Yönergesi",
-              url: "https://teftis.ktb.gov.tr/TR-264533/devlet-tiyatrolari-gorev-ve-calisma-yonergesi.html",
-            }],
-          }],
+        responseId: "gemini_test",
+        candidates: [{
+          content: {
+            parts: [{ text: "Kaynaklara dayalı canlı yanıt." }],
+          },
         }],
       };
     },
@@ -44,17 +40,16 @@ const hybrid = await handler({
   headers: { origin: "https://hermesmurat.github.io", "x-forwarded-for": "192.0.2.11" },
   body: JSON.stringify({
     question: "Dekoratörün görev sınırı nedir?",
-    context: "[K1] El kitabı kanıtı",
+    context: "[K1] El kitabı kanıtı\n[M1] Resmî kaynak\nhttps://teftis.ktb.gov.tr/TR-264533/devlet-tiyatrolari-gorev-ve-calisma-yonergesi.html",
     mode: "hybrid",
   }),
 });
 assert.equal(hybrid.statusCode, 200);
 assert.equal(hybrid.headers["access-control-allow-origin"], "https://hermesmurat.github.io");
-assert.equal(requestBody.model, "gpt-5.6-terra");
-assert.equal(requestBody.tools[0].type, "web_search");
-assert.deepEqual(requestBody.tools[0].filters.allowed_domains.sort(), ["devtiyatro.gov.tr", "teftis.ktb.gov.tr"]);
-assert.equal(requestBody.reasoning.effort, "medium");
-assert.match(requestBody.safety_identifier, /^tte_[a-f0-9]{32}$/);
+assert.match(requestUrl, /gemini-2\.5-flash:generateContent$/);
+assert.match(requestBody.systemInstruction.parts[0].text, /Devlet Tiyatrolarında teknik yönetim/);
+assert.equal(requestBody.contents.at(-1).role, "user");
+assert.equal(JSON.parse(hybrid.body).provider, "gemini");
 assert.equal(JSON.parse(hybrid.body).sources.length, 1);
 
 await handler({
@@ -67,6 +62,6 @@ await handler({
   }),
 });
 assert.equal(requestBody.tools, undefined);
-assert.equal(requestBody.tool_choice, undefined);
+assert.equal(requestBody.contents.at(-1).role, "user");
 
-console.log("Canlı model işlevi, kaynak filtresi ve CORS doğrulandı.");
+console.log("Gemini canlı model işlevi, kaynak filtresi ve CORS doğrulandı.");

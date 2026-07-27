@@ -375,10 +375,15 @@
     return [...book, ...laws, ...web].join("\n\n");
   }
 
-  async function buildLiveContext(question) {
+  async function buildLiveContext(question, options = {}) {
     const bookResults = await searchHandbook(question, 8);
     const lawResults = searchLaws(question, 5);
-    return evidenceText(bookResults, lawResults, []).slice(0, 30000);
+    const mode = options.mode === "book" ? "book" : "hybrid";
+    const legal = isLegalQuestion(question, lawResults);
+    const webResults = mode === "book"
+      ? []
+      : await researchWeb(question, true, legal, lawResults);
+    return evidenceText(bookResults, lawResults, webResults).slice(0, 30000);
   }
 
   function setAnswerHandler(handler) {

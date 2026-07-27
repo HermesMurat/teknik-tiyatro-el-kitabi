@@ -41,9 +41,9 @@
     return node;
   }
 
-  async function collectContext(question) {
+  async function collectContext(question, mode) {
     if (typeof window.TTEKRehber?.buildLiveContext === 'function') {
-      const context = await window.TTEKRehber.buildLiveContext(question);
+      const context = await window.TTEKRehber.buildLiveContext(question, { mode });
       if (context) return String(context).slice(0, 30000);
     }
 
@@ -87,7 +87,7 @@
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
           question: q,
-          context: await collectContext(q),
+          context: await collectContext(q, mode),
           history: history.slice(-6),
           mode,
         }),
@@ -95,7 +95,8 @@
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || 'Canlı model yanıt veremedi.');
 
-      loading.innerHTML = `<div class="research-answer"><p>${markdown(data.answer)}</p></div>${sourceList(data.sources)}<div class="notice"><strong>Canlı model yanıtı</strong><br>Yanıt el kitabı bağlamı${mode === 'book' ? '' : ' ve güncel resmî Devlet Tiyatroları kaynakları'} kullanılarak oluşturuldu. Resmî metin ve kurumun yetkili kararı önceliklidir.</div>`;
+      const provider = data.provider === 'gemini' ? 'Gemini ücretsiz katmanı' : 'canlı model';
+      loading.innerHTML = `<div class="research-answer"><p>${markdown(data.answer)}</p></div>${sourceList(data.sources)}<div class="notice"><strong>${escapeHtml(provider)} yanıtı</strong><br>Yanıt el kitabı bağlamı${mode === 'book' ? '' : ' ve güncel resmî Devlet Tiyatroları kaynakları'} kullanılarak oluşturuldu. Resmî metin ve kurumun yetkili kararı önceliklidir.</div>`;
       history.push({ role: 'user', content: q }, { role: 'assistant', content: data.answer });
     } catch (error) {
       if (localAnswer) {
@@ -113,5 +114,5 @@
   const button = document.querySelector('#openAI');
   if (button) button.textContent = 'Yapay zekâ ile ara';
   const header = document.querySelector('#ai .dlghead > div');
-  if (header) header.innerHTML = '<b>Canlı Teknik Rehber</b><br><small>El kitabının tam metni + yalnız resmî Devlet Tiyatroları kaynakları</small>';
+  if (header) header.innerHTML = '<b>Canlı Teknik Rehber</b><br><small>Ücretsiz Gemini modeli + el kitabı + resmî Devlet Tiyatroları kaynakları</small>';
 })();

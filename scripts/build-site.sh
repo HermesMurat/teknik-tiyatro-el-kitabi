@@ -31,7 +31,7 @@ from pathlib import Path
 for name in ('index.html', 'chapter.html'):
     path = Path('public') / name
     html = path.read_text(encoding='utf-8')
-    tag = '<script src="live-ai.js?v=2"></script>'
+    tag = '<script src="live-ai.js?v=3"></script>'
     if tag not in html:
         html = html.replace('</body>', f'{tag}</body>')
     path.write_text(html, encoding='utf-8')
