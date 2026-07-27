@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#17120f">
-  <title>Tiyatro Teknik Müdürlüğü El Kitabı</title>
+  <title>Devlet Tiyatroları Çalışma ve Uygulama Rehberi</title>
   <style>
     :root{--bg:#f3efe8;--paper:#fffdf8;--ink:#201a17;--muted:#71645c;--line:#d9cec2;--red:#962f2f;--gold:#b88331}
     *{box-sizing:border-box}
@@ -58,24 +58,24 @@
 <body>
   <header>
     <div class="bar">
-      <div class="brand">Teknik Tiyatro<small>Yaşayan el kitabı</small></div>
+      <div class="brand">Devlet Tiyatroları<small>Çalışma ve uygulama rehberi</small></div>
       <button class="btn" id="openAI">Yapay zekâ ile araştır</button>
     </div>
   </header>
   <main>
     <section class="hero">
       <div>
-        <div class="eyebrow">Açık erişimli teknik başvuru sistemi</div>
-        <h1>Tiyatro Teknik Müdürlüğü El Kitabı</h1>
-        <p class="lead">Bir bölüme basarak tam metnini okuyun; el kitabının tamamında ve resmî Devlet Tiyatroları kaynaklarında araştırma yapın.</p>
+        <div class="eyebrow">Açık erişimli kurumsal başvuru sistemi</div>
+        <h1>Devlet Tiyatroları Çalışma ve Uygulama Rehberi</h1>
+        <p class="lead">Teknik üretimden oyunculuk, rejisörlük ve yönetime kadar bütün çalışma alanlarını okuyun; rehberde ve güncel resmî kaynaklarda araştırma yapın.</p>
       </div>
       <div class="stats">
-        <div><strong id="chapterStat">24</strong>bölüm</div><div><strong id="wordStat">—</strong>kelime</div>
+        <div><strong id="chapterStat">30</strong>bölüm</div><div><strong id="wordStat">—</strong>kelime</div>
         <div><strong id="headingStat">—</strong>başlık</div><div><strong>7/24</strong>erişim</div>
       </div>
     </section>
     <form class="search" id="searchForm">
-      <input id="search" type="search" placeholder="Sahne amiri, sıcak çalışma, turne, kostüm, telif…">
+      <input id="search" type="search" placeholder="Oyuncu, rejisör, müdür, dekoratör bilgisayarı, turne, İSG…">
       <button class="btn">Ara</button>
     </form>
     <div class="tools">
@@ -85,23 +85,23 @@
     </div>
     <section class="grid" id="grid"></section>
   </main>
-  <footer>Hazırlayan: Murat Gülmez · Sitedeki kaynakça ve mevzuat bağlantıları yalnız Devlet Tiyatrolarına ilişkin resmî metinlerden oluşur.</footer>
+  <footer>Hazırlayan: Murat Gülmez · Teknik, sanatsal ve idarî uygulamalar güncel resmî kaynaklarla birlikte sunulur; işlem öncesinde resmî metnin son sürümü kontrol edilmelidir.</footer>
 
   <dialog id="ai">
     <div class="dlghead">
-      <div><b>Bağlamlı Araştırma Rehberi</b><br><small>El kitabının tam metni ve resmî Devlet Tiyatroları kaynakları</small></div>
+      <div><b>Bağlamlı Araştırma Rehberi</b><br><small>Rehberin tam metni ve ilgili resmî kamu kaynakları</small></div>
       <button class="btn secondary" id="closeAI">Kapat</button>
     </div>
     <div class="dlgbody" id="messages">
-      <div class="msg">Bir teknik durum, görev veya Devlet Tiyatroları mevzuatı hakkında sorun. Rehber ilgili bölüm metinlerini ve yalnız resmî Devlet Tiyatroları kaynaklarını birlikte tarar.</div>
+      <div class="msg">Teknik, sanatsal veya idarî bir durum hakkında sorun. Rehber; ilgili bölüm metinlerini ve konuya doğrudan ilişkin resmî kamu kaynaklarını birlikte tarar.</div>
     </div>
     <form class="ai-form" id="aiForm">
       <textarea id="question" maxlength="1200" rows="3" placeholder="Örn. Sahne motorunun periyodik kontrol süresi geçmişse temsil yapılabilir mi?"></textarea>
       <div class="modes">
         <label><input type="radio" name="mode" value="book"> Yalnız el kitabı</label>
-        <label><input type="radio" name="mode" value="hybrid" checked> El kitabı + DT kaynakları</label>
+        <label><input type="radio" name="mode" value="hybrid" checked> Rehber + resmî kaynaklar</label>
       </div>
-      <div class="status">İnternet araştırması yalnız resmî Devlet Tiyatroları/Kültür ve Turizm Bakanlığı sayfalarıyla sınırlıdır.</div>
+      <div class="status">İnternet araştırması yalnız konuya doğrudan ilişkin resmî kamu kurumlarının sayfalarıyla sınırlıdır.</div>
       <button class="btn" type="submit">Araştır ve yanıtla</button>
     </form>
   </dialog>
@@ -119,7 +119,8 @@
       if (number <= 9) return "Üretim ve Sahne";
       if (number <= 13) return "Operasyon ve Güvenlik";
       if (number <= 18) return "Dokümantasyon ve Gelişim";
-      return "Sürdürülebilirlik ve Uygunluk";
+      if (number <= 24) return "Sürdürülebilirlik ve Uygunluk";
+      return "Kurumsal ve Sanatsal İşleyiş";
     }
 
     function filtered() {
@@ -163,7 +164,7 @@
         ...(section.paragraphs || []),
         ...(section.bullets || []),
         ...((section.tables || []).flatMap((table) => [...(table.headers || []), ...(table.rows || []).flat()])),
-        ...((section.blocks || []).filter((block) => block.type === "source").flatMap((source) => [source.title, source.note])),
+        ...((section.blocks || []).flatMap((block) => block.type === "table" ? [...(block.headers || []), ...(block.rows || []).flat()] : [block.text, block.title, block.note])),
       ].join(" ");
     }
 
@@ -219,6 +220,6 @@
     $("#category").addEventListener("change", () => $("#search").value.trim() ? searchAllContent() : render());
     $("#clear").addEventListener("click", () => { $("#search").value = ""; $("#category").value = ""; render(); });
   </script>
-  <script src="rehber.js?v=8"></script>
+  <script src="rehber.js?v=9"></script>
 </body>
 </html>
