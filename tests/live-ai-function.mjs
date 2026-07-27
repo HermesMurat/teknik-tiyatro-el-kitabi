@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 
 process.env.GEMINI_API_KEY = "test-key";
-process.env.GEMINI_MODEL = "gemini-2.5-flash";
+process.env.GEMINI_MODEL = "gemini-flash-lite-latest";
 delete process.env.OPENAI_API_KEY;
 
 const { handler } = await import("../netlify/functions/ai.mjs");
@@ -24,11 +24,11 @@ globalThis.fetch = async (url, options) => {
     status: 200,
     async json() {
       return {
-        responseId: "gemini_test",
-        candidates: [{
-          content: {
-            parts: [{ text: "Kaynaklara dayalı canlı yanıt." }],
-          },
+        id: "gemini_test",
+        status: "completed",
+        steps: [{
+          type: "model_output",
+          content: [{ type: "text", text: "Kaynaklara dayalı canlı yanıt." }],
         }],
       };
     },
@@ -46,9 +46,11 @@ const hybrid = await handler({
 });
 assert.equal(hybrid.statusCode, 200);
 assert.equal(hybrid.headers["access-control-allow-origin"], "https://hermesmurat.github.io");
-assert.match(requestUrl, /gemini-2\.5-flash:generateContent$/);
-assert.match(requestBody.systemInstruction.parts[0].text, /Devlet Tiyatrolarında teknik yönetim/);
-assert.equal(requestBody.contents.at(-1).role, "user");
+assert.equal(requestUrl, "https://generativelanguage.googleapis.com/v1beta/interactions");
+assert.equal(requestBody.model, "gemini-flash-lite-latest");
+assert.match(requestBody.system_instruction, /Devlet Tiyatrolarında teknik yönetim/);
+assert.match(requestBody.input, /Dekoratörün görev sınırı nedir/);
+assert.equal(requestBody.store, false);
 assert.equal(JSON.parse(hybrid.body).provider, "gemini");
 assert.equal(JSON.parse(hybrid.body).sources.length, 1);
 
@@ -62,6 +64,6 @@ await handler({
   }),
 });
 assert.equal(requestBody.tools, undefined);
-assert.equal(requestBody.contents.at(-1).role, "user");
+assert.match(requestBody.input, /Yalnız kitaptan yanıtla/);
 
-console.log("Gemini canlı model işlevi, kaynak filtresi ve CORS doğrulandı.");
+console.log("Gemini Interactions canlı model işlevi, kaynak filtresi ve CORS doğrulandı.");
