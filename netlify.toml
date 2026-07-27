@@ -1,5 +1,6 @@
 [build]
-  publish = "."
+  command = "bash scripts/build-site.sh"
+  publish = "public"
   functions = "netlify/functions"
 
 [functions]
