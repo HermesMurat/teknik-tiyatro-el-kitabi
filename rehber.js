@@ -89,6 +89,7 @@
     currentChapter: null,
     currentSection: null,
     loadingAll: null,
+    answerHandler: null,
   };
 
   const $ = (selector) => document.querySelector(selector);
@@ -366,12 +367,22 @@
     );
     const laws = lawResults.map(
       (item, index) =>
-        `[M${index + 1}] ${item.title}, ${item.articles}\n${item.summary}\nÖnerilen kontrol: ${item.action}`
+        `[M${index + 1}] ${item.title}, ${item.articles}\n${item.summary}\n${item.url}\nÖnerilen kontrol: ${item.action}`
     );
     const web = webResults.map(
       (item, index) => `[W${index + 1}] ${item.title}\n${item.snippet || "Kaynak bulundu; metin özeti alınamadı."}\n${item.url}`
     );
     return [...book, ...laws, ...web].join("\n\n");
+  }
+
+  async function buildLiveContext(question) {
+    const bookResults = await searchHandbook(question, 8);
+    const lawResults = searchLaws(question, 5);
+    return evidenceText(bookResults, lawResults, []).slice(0, 30000);
+  }
+
+  function setAnswerHandler(handler) {
+    state.answerHandler = typeof handler === "function" ? handler : null;
   }
 
   async function browserModel() {
@@ -548,7 +559,8 @@
       const question = input?.value.trim() || "";
       if (question.length < 3) return;
       input.value = "";
-      answer(question);
+      const handler = state.answerHandler || answer;
+      handler(question);
     });
     document.addEventListener("click", (event) => {
       const button = event.target.closest("[data-ask-context]");
@@ -573,7 +585,15 @@
   `;
   document.head.append(style);
 
-  window.TTEKRehber = { answer, openDialog, setChapter, setSection, loadAllChapters };
+  window.TTEKRehber = {
+    answer,
+    buildLiveContext,
+    loadAllChapters,
+    openDialog,
+    setAnswerHandler,
+    setChapter,
+    setSection,
+  };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bindUI);
   else bindUI();
 })();

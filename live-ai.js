@@ -2,9 +2,13 @@
 (() => {
   'use strict';
 
-  const ENDPOINT = window.LIVE_AI_ENDPOINT || '/api/ai';
+  const ENDPOINT = window.LIVE_AI_ENDPOINT || (
+    location.hostname === 'hermesmurat.github.io'
+      ? 'https://teknik-tiyatro-el-kitabi.netlify.app/api/ai'
+      : '/api/ai'
+  );
   const history = [];
-  const localAnswer = typeof window.answer === 'function' ? window.answer : null;
+  const localAnswer = window.TTEKRehber?.answer || null;
 
   function escapeHtml(value) {
     return String(value ?? '').replace(/[&<>"']/g, (ch) => ({
@@ -37,62 +41,77 @@
     return node;
   }
 
-  function collectContext(question) {
+  async function collectContext(question) {
+    if (typeof window.TTEKRehber?.buildLiveContext === 'function') {
+      const context = await window.TTEKRehber.buildLiveContext(question);
+      if (context) return String(context).slice(0, 30000);
+    }
+
     const candidates = [];
-    document.querySelectorAll('[data-chapter-content], article, main .chapter-content, .reader-content').forEach((node) => {
+    document.querySelectorAll('#content, [data-chapter-content], main .chapter-content, .reader-content').forEach((node) => {
       const text = node.innerText?.trim();
       if (text) candidates.push(text);
     });
 
-    if (!candidates.length && Array.isArray(window.chapters || globalThis.chapters)) {
-      const list = window.chapters || globalThis.chapters;
-      const terms = String(question).toLocaleLowerCase('tr-TR').split(/\s+/).filter((x) => x.length > 2);
-      const ranked = list.map((c) => {
-        const text = [c[1], c[2], c[3], ...(c[4] || [])].join(' ');
-        const normalized = text.toLocaleLowerCase('tr-TR');
-        const score = terms.reduce((sum, term) => sum + (normalized.includes(term) ? 1 : 0), 0);
-        return { score, text: `Bölüm ${c[0]}: ${c[1]}\n${c[3]}` };
-      }).sort((a, b) => b.score - a.score).slice(0, 6);
-      candidates.push(ranked.map((x) => x.text).join('\n\n'));
-    }
-
     return candidates.join('\n\n').slice(0, 30000);
+  }
+
+  function sourceList(sources) {
+    if (!Array.isArray(sources) || !sources.length) return '';
+    const links = sources.map((source) => {
+      try {
+        const url = new URL(source.url);
+        if (!/^https?:$/.test(url.protocol)) return '';
+        const title = escapeHtml(source.title || url.hostname);
+        return `<a class="source" href="${escapeHtml(url.href)}" target="_blank" rel="noopener noreferrer">${title}</a>`;
+      } catch {
+        return '';
+      }
+    }).filter(Boolean);
+    return links.length
+      ? `<div class="rag-sources"><strong>Canlı modelin kullandığı resmî kaynaklar</strong>${links.join('')}</div>`
+      : '';
   }
 
   async function liveAnswer(question) {
     const q = String(question || '').trim();
     if (!q) return;
 
-    addMessage(escapeHtml(q), 'user');
+    const userMessage = addMessage(escapeHtml(q), 'user');
     const loading = addMessage('<strong>Canlı model araştırıyor…</strong><br><small>El kitabı ve güncel resmî kaynaklar birlikte inceleniyor.</small>');
 
     try {
+      const mode = document.querySelector('input[name="mode"]:checked')?.value || 'hybrid';
       const response = await fetch(ENDPOINT, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
           question: q,
-          context: collectContext(q),
+          context: await collectContext(q),
           history: history.slice(-6),
+          mode,
         }),
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || 'Canlı model yanıt veremedi.');
 
-      loading.innerHTML = `<p>${markdown(data.answer)}</p><div class="notice"><strong>Canlı araştırma</strong><br>Yanıt el kitabı bağlamı ve güncel internet araştırması kullanılarak oluşturuldu. Resmî mevzuat metni ve kurumun yetkili kararı önceliklidir.</div>`;
+      loading.innerHTML = `<div class="research-answer"><p>${markdown(data.answer)}</p></div>${sourceList(data.sources)}<div class="notice"><strong>Canlı model yanıtı</strong><br>Yanıt el kitabı bağlamı${mode === 'book' ? '' : ' ve güncel resmî Devlet Tiyatroları kaynakları'} kullanılarak oluşturuldu. Resmî metin ve kurumun yetkili kararı önceliklidir.</div>`;
       history.push({ role: 'user', content: q }, { role: 'assistant', content: data.answer });
     } catch (error) {
-      loading.innerHTML = `<strong>Canlı model şu anda kullanılamıyor.</strong><br>${escapeHtml(error.message || error)}<div class="notice">Yerel kaynak rehberiyle devam ediliyor.</div>`;
       if (localAnswer) {
+        userMessage?.remove();
+        loading?.remove();
         try { await localAnswer(q); } catch (_) {}
+      } else {
+        loading.innerHTML = `<strong>Canlı model şu anda kullanılamıyor.</strong><br>${escapeHtml(error.message || error)}<div class="notice">Lütfen kısa süre sonra yeniden deneyin.</div>`;
       }
     }
   }
 
-  window.answer = liveAnswer;
+  window.TTEKRehber?.setAnswerHandler(liveAnswer);
 
   const button = document.querySelector('#openAI');
-  if (button) button.textContent = 'Canlı yapay zekâ ve mevzuat';
+  if (button) button.textContent = 'Yapay zekâ ile ara';
   const header = document.querySelector('#ai .dlghead > div');
-  if (header) header.innerHTML = '<b>Canlı Teknik Rehber</b><br><small>El kitabı + güncel resmî mevzuat + genel araştırma</small>';
+  if (header) header.innerHTML = '<b>Canlı Teknik Rehber</b><br><small>El kitabının tam metni + yalnız resmî Devlet Tiyatroları kaynakları</small>';
 })();
