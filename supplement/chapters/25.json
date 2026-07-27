@@ -1,0 +1,97 @@
+{
+  "number": 25,
+  "title": "Kurumsal Yapı, Yetki ve Sorumluluk",
+  "subtitle": "Genel Müdürlükten taşra tiyatro müdürlüğüne uzanan görev zinciri, yetki devri ve ortak karar alanları.",
+  "wordCount": 1050,
+  "sectionCount": 9,
+  "sections": [
+    {
+      "title": "Bu bölüm nasıl kullanılmalı?",
+      "level": 1,
+      "blocks": [
+        {"type": "paragraph", "text": "Bu bölüm, unvanları birbirine üstünlük sırasına dizmek için değil; bir işin sanatsal, idarî, malî ve teknik sorumluluğunun kimde başladığını ve hangi noktada ortak değerlendirme gerektiğini göstermek için hazırlanmıştır."},
+        {"type": "bullet", "text": "Kanun, yönetmelik, yönerge, Genel Müdürlük düzenlemesi ve yazılı görev emri arasında çelişki görülürse üst norm ve güncel resmî metin esas alınır."},
+        {"type": "bullet", "text": "Görev dağılımı; kadro, sözleşme, görevlendirme yazısı ve yerel imza/yetki devriyle birlikte okunmalıdır."}
+      ]
+    },
+    {
+      "title": "Genel Müdür ve Genel Müdürlük",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Genel Müdür, Devlet Tiyatroları hizmetlerinin kanun, strateji, bütçe ve kurum düzenlemelerine uygun yürütülmesinden birinci derecede sorumludur. Merkez ve taşra birimlerinin koordinasyonu, kaynakların tahsisi, yetki devri ve kurumsal kararların uygulanması bu çerçevede değerlendirilir."},
+        {"type": "bullet", "text": "Yetki devri, devreden amirin sorumluluğunu bütünüyle ortadan kaldırmaz."},
+        {"type": "bullet", "text": "Taşra birimleri, Genel Müdürlüğe bağlıdır; yerel uygulama kurumsal talimat ve bütçe sınırları içinde yürütülür."}
+      ]
+    },
+    {
+      "title": "Başrejisör ve sanatsal koordinasyon",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Başrejisör, kurumun sanatsal çalışmalarının yürütülmesi ve koordinasyonunda merkezî görev üstlenir. Repertuvarın sahneye taşınması, rejisör ve sanatçı görevlendirmeleri ile sanatsal kurulların çalışması, ilgili resmî düzenlemeler çerçevesinde ele alınır."},
+        {"type": "bullet", "text": "Sanatsal tercih, iş sağlığı ve güvenliği kurallarını ortadan kaldırmaz."},
+        {"type": "bullet", "text": "Teknik imkânsızlık veya ciddi risk görüldüğünde konu yazılı ve çözüm önerili biçimde sanatsal ve idarî mercilere taşınır."}
+      ]
+    },
+    {
+      "title": "Tiyatro müdürü ve taşra birimi",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Taşra tiyatro müdürlükleri, bulundukları yerde sanat, yönetim, malî işler ve teknik hizmetleri Genel Müdürlüğe karşı sorumlu olarak yürütür. Tiyatro müdürü, yerel koordinasyonun tek başına bütün mesleklerin uzmanlık kararlarını üstlenmesi anlamına gelmediğini gözetmelidir."},
+        {"type": "table", "headers": ["Alan", "Esas sorumluluk", "Birlikte çalışma"], "rows": [
+          ["Sanatsal", "Sanatsal makamlar ve görevlendirilen yaratıcı ekip", "Oyuncu, rejisör, dramaturg ve teknik ekip"],
+          ["İdarî/malî", "Harcama, personel, yazışma ve kayıt yetkilileri", "Tiyatro müdürlüğü, merkez birimleri"],
+          ["Teknik", "Teknik müdürlük ve ilgili uzmanlık sorumluları", "Reji, sahne amirliği, atölye ve sahne ekipleri"],
+          ["İSG", "İşveren vekilleri ve mevzuatta tanımlı sorumlular", "Bütün çalışanlar ve kurullar"]
+        ]}
+      ]
+    },
+    {
+      "title": "Yetki devri ve yazılı iz",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Yetki, yalnız sözlü teamülle varsayılmamalıdır. İmza yetkisi, harcama yetkisi, gerçekleştirme görevi, muayene-kabul görevi ve teknik onay birbirinden farklı hukuki sonuçlar doğurur."},
+        {"type": "bullet", "text": "Kim istedi? Kim teknik gerekçeyi hazırladı? Kim bütçe ve satın alma işlemini yürüttü? Kim kabul etti? Bu roller dosyada ayrı ayrı görünmelidir."},
+        {"type": "bullet", "text": "Aynı kişinin birden çok rol üstlenmesi gerekiyorsa görevler ayrılığı ve çıkar çatışması yönünden mevzuat kontrolü yapılmalıdır."}
+      ]
+    },
+    {
+      "title": "Talimat, itiraz ve güvenli durdurma",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Çalışan, verilen görevi görev tanımı, yetki, güvenlik ve uygulanabilirlik bakımından değerlendirir. Açık tehlike veya mevzuata aykırılık şüphesinde sorun kişiselleştirilmeden; risk, dayanak, sonuç ve çözüm seçeneğiyle yazılı hale getirilir."},
+        {"type": "bullet", "text": "Acil tehlikede önce insan güvenliği ve alan emniyeti sağlanır."},
+        {"type": "bullet", "text": "Uyuşmazlık, kayıt altına alınarak yetkili amire ve gerekiyorsa İSG mekanizmasına taşınır."},
+        {"type": "bullet", "text": "Sanatsal baskı, süre baskısı veya temsil programı güvenlik kontrolünü atlama gerekçesi değildir."}
+      ]
+    },
+    {
+      "title": "Ortak karar tutanağı",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Dekor, ışık, efekt, sahne mekaniği, kostüm, turne ve temsil güvenliği gibi çok disiplinli konularda kısa bir ortak karar tutanağı kullanılmalıdır."},
+        {"type": "table", "headers": ["Kayıt alanı", "Yazılacak bilgi"], "rows": [
+          ["İhtiyaç", "İstenen sanatsal/işlevsel sonuç"],
+          ["Kısıt", "Bütçe, süre, mekân, personel ve mevzuat sınırı"],
+          ["Risk", "Olasılık, etki ve mevcut önlem"],
+          ["Karar", "Seçilen çözüm ve reddedilen seçeneklerin gerekçesi"],
+          ["Sorumlu/tarih", "Uygulayan, kontrol eden ve tamamlanma zamanı"]
+        ]}
+      ]
+    },
+    {
+      "title": "Resmî dayanaklar",
+      "level": 2,
+      "blocks": [
+        {"type": "source", "title": "Devlet Tiyatroları Görev ve Çalışma Yönergesi", "note": "Genel Müdürlük, başrejisörlük, taşra birimleri ve mesleklerin görev çerçevesi.", "url": "https://teftis.ktb.gov.tr/TR-264533/devlet-tiyatrolari-gorev-ve-calisma-yonergesi.html"},
+        {"type": "source", "title": "Kültür ve Turizm Bakanlığı yönergeler dizini", "note": "İmza yetkileri, ön malî kontrol, bilgi işlem ve güncel DT yönergeleri için resmî dizin.", "url": "https://teftis.ktb.gov.tr/TR-264212/yonergeler.html"}
+      ]
+    },
+    {
+      "title": "Güncellik notu",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Bu rehber, uygulamayı kolaylaştıran bir çalışma aracıdır; atama, disiplin, ödeme, sözleşme veya yetki doğuran resmî işlem yerine geçmez. İşlem öncesinde resmî metnin güncel sürümü ve kurumdaki son yetki devri kontrol edilmelidir."}
+      ]
+    }
+  ]
+}
