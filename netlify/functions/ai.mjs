@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 
 const OPENAI_URL = "https://api.openai.com/v1/responses";
+const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 const officialDomains = new Set(["teftis.ktb.gov.tr", "devtiyatro.gov.tr"]);
 const rateLimits = new Map();
 
@@ -92,6 +93,31 @@ function extractResult(response) {
   };
 }
 
+function contextSources(context) {
+  const sources = [];
+  const urlPattern = /https?:\/\/[^\s<>"')\]]+/g;
+  for (const match of String(context || "").matchAll(urlPattern)) {
+    const url = match[0].replace(/[.,;:]+$/, "");
+    const source = { title: "", url };
+    if (!officialSource(source)) continue;
+    try {
+      source.title = new URL(url).hostname;
+    } catch {
+      continue;
+    }
+    sources.push(source);
+  }
+  return [...new Map(sources.map((source) => [source.url, source])).values()].slice(0, 10);
+}
+
+function extractGeminiResult(response, context) {
+  const answer = (response?.candidates?.[0]?.content?.parts ?? [])
+    .map((part) => part?.text || "")
+    .join("\n")
+    .trim();
+  return { answer, sources: contextSources(context) };
+}
+
 export async function handler(event) {
   const origin = event.headers?.origin || "";
   if (!allowedOrigins.has(origin)) {
@@ -100,7 +126,7 @@ export async function handler(event) {
 
   if (event.httpMethod === "OPTIONS") return json(204, {}, origin);
   if (event.httpMethod !== "POST") return json(405, { error: "Yalnız POST kabul edilir." }, origin);
-  if (!process.env.OPENAI_API_KEY) {
+  if (!process.env.GEMINI_API_KEY && !process.env.OPENAI_API_KEY) {
     return json(503, { error: "Canlı model anahtarı henüz sunucuya tanımlanmamış." }, origin);
   }
   if (!withinRateLimit(clientKey(event))) {
@@ -155,52 +181,89 @@ Ciddi ve yakın tehlike, yangın, kaldırma ekipmanı, elektrik, rigging veya ac
     },
   ];
 
-  const requestBody = {
-    model: process.env.OPENAI_MODEL || "gpt-5.6-terra",
-    instructions,
-    input,
-    reasoning: {
-      effort: process.env.OPENAI_REASONING_EFFORT || "medium",
-    },
-    max_output_tokens: 2200,
-    safety_identifier: safetyIdentifier(event),
-  };
-
-  if (mode === "hybrid") {
-    requestBody.tools = [{
-      type: "web_search",
-      filters: {
-        allowed_domains: [...officialDomains],
-      },
-      search_context_size: "high",
-      user_location: {
-        type: "approximate",
-        country: "TR",
-        city: "İzmir",
-        region: "İzmir",
-        timezone: "Europe/Istanbul",
-      },
-    }];
-    requestBody.tool_choice = "auto";
-    requestBody.include = ["web_search_call.action.sources"];
-  }
-
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 45000);
   try {
-    const response = await fetch(OPENAI_URL, {
-      method: "POST",
-      signal: controller.signal,
-      headers: {
-        authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    });
+    const useGemini = Boolean(process.env.GEMINI_API_KEY) && process.env.AI_PROVIDER !== "openai";
+    let response;
+    let data;
+    let result;
+    let provider;
 
-    const data = await response.json();
+    if (useGemini) {
+      provider = "gemini";
+      const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+      const geminiBody = {
+        systemInstruction: {
+          parts: [{ text: instructions }],
+        },
+        contents: input.map((message) => ({
+          role: message.role === "assistant" ? "model" : "user",
+          parts: [{ text: message.content }],
+        })),
+        generationConfig: {
+          temperature: 0.2,
+          maxOutputTokens: 2200,
+        },
+      };
+      response = await fetch(`${GEMINI_BASE_URL}/${encodeURIComponent(model)}:generateContent`, {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          "x-goog-api-key": process.env.GEMINI_API_KEY,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(geminiBody),
+      });
+      data = await response.json();
+      result = extractGeminiResult(data, context);
+    } else {
+      provider = "openai";
+      const requestBody = {
+        model: process.env.OPENAI_MODEL || "gpt-5.6-terra",
+        instructions,
+        input,
+        reasoning: {
+          effort: process.env.OPENAI_REASONING_EFFORT || "medium",
+        },
+        max_output_tokens: 2200,
+        safety_identifier: safetyIdentifier(event),
+      };
+
+      if (mode === "hybrid") {
+        requestBody.tools = [{
+          type: "web_search",
+          filters: {
+            allowed_domains: [...officialDomains],
+          },
+          search_context_size: "high",
+          user_location: {
+            type: "approximate",
+            country: "TR",
+            city: "İzmir",
+            region: "İzmir",
+            timezone: "Europe/Istanbul",
+          },
+        }];
+        requestBody.tool_choice = "auto";
+        requestBody.include = ["web_search_call.action.sources"];
+      }
+
+      response = await fetch(OPENAI_URL, {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+      data = await response.json();
+      result = extractResult(data);
+    }
+
     if (!response.ok) {
-      console.error("OpenAI error", response.status, data);
+      console.error(`${provider} error`, response.status, data);
       return json(
         response.status,
         { error: "Canlı model yanıt veremedi. Lütfen kısa süre sonra yeniden deneyin." },
@@ -208,9 +271,12 @@ Ciddi ve yakın tehlike, yangın, kaldırma ekipmanı, elektrik, rigging veya ac
       );
     }
 
-    const result = extractResult(data);
     if (!result.answer) return json(502, { error: "Model boş yanıt verdi." }, origin);
-    return json(200, { ...result, requestId: data.id || null }, origin);
+    return json(200, {
+      ...result,
+      provider,
+      requestId: data.id || data.responseId || null,
+    }, origin);
   } catch (error) {
     const message = error?.name === "AbortError"
       ? "Canlı araştırma zaman aşımına uğradı."
