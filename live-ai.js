@@ -1,4 +1,4 @@
-/* Tiyatro Teknik El Kitabı · canlı model istemcisi */
+/* Devlet Tiyatroları Çalışma ve Uygulama Rehberi · canlı model istemcisi */
 (() => {
   'use strict';
 
@@ -115,12 +115,12 @@
     await loadPuter();
     const messages = [{
       role: 'system',
-      content: `Sen Türkiye Cumhuriyeti Devlet Tiyatrolarında teknik yönetim için çalışan bir uzman rehbersin.
-Önce verilen Tiyatro Teknik Müdürlüğü El Kitabı kanıt paketini kullan. Yalnız paketteki resmî Devlet Tiyatroları ve Kültür ve Turizm Bakanlığı kaynaklarına dayan. Kaynakta bulunmayan görev, yetki, süre, madde veya kurumsal uygulama uydurma.
+      content: `Sen Türkiye Cumhuriyeti Devlet Tiyatrolarının teknik, sanatsal ve idarî işleyişi için çalışan bir uzman rehbersin.
+Önce verilen Devlet Tiyatroları Çalışma ve Uygulama Rehberi kanıt paketini kullan. Yalnız paketteki konuya doğrudan ilişkin resmî kamu kaynaklarına dayan. Kaynakta bulunmayan görev, yetki, süre, madde veya kurumsal uygulama uydurma.
 Yanıtı Türkçe yaz. Önce doğrudan değerlendirme yap; ardından "Dayanak", "İzlenecek yol" ve "Yetki ve yönlendirme" başlıklarını kullan. El kitabı kanıtlarını [K], mevzuat kanıtlarını [M] olarak göster. Ciddi güvenlik riskinde işi güvenli biçimde durdurmayı ve yetkili teknik/İSG değerlendirmesini öner. Hukuki mütalaa verdiğini iddia etme.`
     }, ...history.slice(-6), {
       role: 'user',
-      content: `${context ? `EL KİTABI VE RESMÎ KAYNAK KANIT PAKETİ:\n${context}\n\n` : ''}SORU:\n${question}`
+      content: `${context ? `REHBER VE RESMÎ KAYNAK KANIT PAKETİ:\n${context}\n\n` : ''}SORU:\n${question}`
     }];
     const response = await window.puter.ai.chat(messages, {
       model: 'gemini-3.5-flash-lite',
@@ -133,7 +133,7 @@ Yanıtı Türkçe yaz. Önce doğrudan değerlendirme yap; ardından "Dayanak", 
   }
 
   function renderAnswer(node, answer, mode, provider, sources = []) {
-    node.innerHTML = `<div class="research-answer"><p>${markdown(answer)}</p></div>${sourceList(sources)}<div class="notice"><strong>${escapeHtml(provider)} yanıtı</strong><br>Yanıt el kitabı bağlamı${mode === 'book' ? '' : ' ve güncel resmî Devlet Tiyatroları kaynakları'} kullanılarak oluşturuldu. Resmî metin ve kurumun yetkili kararı önceliklidir.</div>`;
+    node.innerHTML = `<div class="research-answer"><p>${markdown(answer)}</p></div>${sourceList(sources)}<div class="notice"><strong>${escapeHtml(provider)} yanıtı</strong><br>Yanıt rehber bağlamı${mode === 'book' ? '' : ' ve ilgili güncel resmî kamu kaynakları'} kullanılarak oluşturuldu. Resmî metin ve kurumun yetkili kararı önceliklidir.</div>`;
   }
 
   async function liveAnswer(question) {
@@ -141,7 +141,7 @@ Yanıtı Türkçe yaz. Önce doğrudan değerlendirme yap; ardından "Dayanak", 
     if (!q) return;
 
     const userMessage = addMessage(escapeHtml(q), 'user');
-    const loading = addMessage('<strong>Canlı model araştırıyor…</strong><br><small>El kitabı ve güncel resmî kaynaklar birlikte inceleniyor.</small>');
+    const loading = addMessage('<strong>Canlı model araştırıyor…</strong><br><small>Rehber ve güncel resmî kaynaklar birlikte inceleniyor.</small>');
     const mode = document.querySelector('input[name="mode"]:checked')?.value || 'hybrid';
     let context = '';
 
@@ -186,5 +186,5 @@ Yanıtı Türkçe yaz. Önce doğrudan değerlendirme yap; ardından "Dayanak", 
   const button = document.querySelector('#openAI');
   if (button) button.textContent = 'Yapay zekâ ile ara';
   const header = document.querySelector('#ai .dlghead > div');
-  if (header) header.innerHTML = '<b>Canlı Teknik Rehber</b><br><small>Ücretsiz Gemini modeli + el kitabı + resmî Devlet Tiyatroları kaynakları · API anahtarı gerekmez</small>';
+  if (header) header.innerHTML = '<b>Canlı Çalışma Rehberi</b><br><small>Ücretsiz Gemini modeli + 30 bölümlü rehber + ilgili resmî kamu kaynakları · API anahtarı gerekmez</small>';
 })();
