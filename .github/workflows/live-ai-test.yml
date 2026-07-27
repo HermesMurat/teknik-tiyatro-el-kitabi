@@ -1,0 +1,27 @@
+name: Canlı Model Testi
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Depoyu al
+        uses: actions/checkout@v6
+      - name: JavaScript sözdizimini denetle
+        run: |
+          node --check live-ai.js
+          node --check netlify/functions/ai.mjs
+      - name: Tam metinli siteyi derle
+        run: bash scripts/build-site.sh
+      - name: Yayın dosyalarını doğrula
+        run: |
+          test -f public/live-ai.js
+          grep -q 'live-ai.js?v=1' public/index.html
+          grep -q 'live-ai.js?v=1' public/chapter.html
+          test "$(find public/chapters -maxdepth 1 -name '[0-9][0-9].json' | wc -l)" -eq 24
