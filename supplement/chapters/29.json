@@ -1,0 +1,122 @@
+{
+  "number": 29,
+  "title": "Bilgisayar, Yazılım ve Bilgi İşlem Talepleri",
+  "subtitle": "Dekoratör ve teknik ekip bilgisayarı için ihtiyaç dosyası, teknik uygun görüş, tasarruf tedbiri istisnası ve satın alma yolu.",
+  "wordCount": 1500,
+  "sectionCount": 11,
+  "sections": [
+    {
+      "title": "Kısa cevap: Hangi izin gerekiyor?",
+      "level": 1,
+      "blocks": [
+        {"type": "paragraph", "text": "Bakanlık bilgi sistemine bağlanacak bilgisayar, çevre birimi veya yazılım için Kültür ve Turizm Bakanlığı Bilgi İşlem Sistemleri Kullanımına İlişkin Yönerge uyarınca ilgili Bakanlık bilgi işlem biriminden teknik uygun görüş alınması gerekir. Bu, Cumhurbaşkanlığına bağlı bir bilgi işlem biriminden izin alma şartı değildir."},
+        {"type": "paragraph", "text": "Bundan ayrı olarak 17 Mayıs 2024 tarihli 2024/7 sayılı Tasarruf Tedbirleri Genelgesi, bilgisayar ve benzeri demirbaş alımlarını üç yıllık dönemde kısıtlamış; zorunlu ihtiyaç istisnalarını Cumhurbaşkanlığı iznine bağlamıştır. Dolayısıyla aynı ihtiyaç için hem teknik uygun görüş hem bütçe/satın alma hem de yürürlükteyse istisna izin zinciri gündeme gelebilir."}
+      ]
+    },
+    {
+      "title": "Birbirine karıştırılmaması gereken üç kontrol",
+      "level": 2,
+      "blocks": [
+        {"type": "table", "headers": ["Kontrol", "Kim/ne için?", "Sonuç"], "rows": [
+          ["Teknik uygun görüş", "Bakanlık bilgi işlem koordinasyonu; ağ uyumu, güvenlik, asgari şartname", "Donanım/yazılım teknik açıdan uygun mu?"],
+          ["Harcama ve satın alma", "Yetkili DT idarî-malî birimleri", "Ödenek ve satın alma yöntemi uygun mu?"],
+          ["Tasarruf tedbiri istisnası", "2024/7 yürürlükteyken zorunlu bilgisayar/demirbaş ihtiyacı", "Genelgedeki izin süreci tamamlandı mı?"]
+        ]}
+      ]
+    },
+    {
+      "title": "Dekoratör iş istasyonu ihtiyacını tanımlama",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Talep 'dekoratöre güçlü bilgisayar' biçiminde değil, yapılacak iş ve ölçülebilir performans üzerinden hazırlanmalıdır."},
+        {"type": "bullet", "text": "2B teknik çizim, 3B modelleme, gerçek zamanlı görselleştirme, render, görüntü işleme ve pafta üretimi ayrı ayrı belirtilir."},
+        {"type": "bullet", "text": "Kullanılacak kurumsal/lisanslı yazılımlar ve desteklenen işletim sistemi yazılır."},
+        {"type": "bullet", "text": "Örnek sahne dosyası, ortalama proje boyutu, beklenen çıktı süresi ve aynı anda çalışan uygulamalar tanımlanır."},
+        {"type": "bullet", "text": "Monitör renk doğruluğu, çözünürlük, depolama, yedekleme ve ağ ihtiyacı gerekçelendirilir."}
+      ]
+    },
+    {
+      "title": "İhtiyaç gerekçesi dosyası",
+      "level": 2,
+      "blocks": [
+        {"type": "table", "headers": ["Başlık", "Kanıt"], "rows": [
+          ["Mevcut durum", "Mevcut cihazların yaşı, envanter numarası, arıza/performance kayıtları"],
+          ["Hizmet etkisi", "Geciken proje, dış hizmet ihtiyacı, prova/üretim takvimi etkisi"],
+          ["Alternatifler", "Mevcut cihaz yükseltme, ortak iş istasyonu, kiralama/hizmet alımı, yeniden tahsis"],
+          ["Zorunluluk", "Neden ertelenemez olduğu ve alınmazsa ortaya çıkacak kamu hizmeti sonucu"],
+          ["Maliyet", "Yaklaşık maliyet, yazılım lisansı, bakım ve toplam sahip olma maliyeti"]
+        ]}
+      ]
+    },
+    {
+      "title": "Bakanlık bilgi işlem uygun görüşü",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Yönergeye göre merkez ve taşra birimlerinin donanım ve yazılım satın almalarında ihtiyacın tespiti ve mevcut sisteme uyumluluk için ilgili Başkanlıktan uygun görüş alınır. Asgari onaylı teknik şartname veya sözleşme şartlarına uyulur; ağ kapasitesini aşan ihtiyaçlarda kablolama ve anahtar gibi altyapı da değerlendirilir."},
+        {"type": "bullet", "text": "Birim bilgi işlem sorumlusu varsa talep bu kişi üzerinden koordineli yürütülür."},
+        {"type": "bullet", "text": "Birimde teknik personel yoksa muayene-kabul için Bakanlık bilgi işlem biriminden teknik personel istenebilir."},
+        {"type": "bullet", "text": "Kurumsal ağa yazılı onay olmadan cihaz bağlanmamalıdır."}
+      ]
+    },
+    {
+      "title": "2024/7 Genelgesi ve süre",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "2024/7 sayılı Genelge 17 Mayıs 2024'te yayımlanmıştır. Genelgedeki üç yıllık süre, aksi yönde yeni bir düzenleme yapılmadıkça 17 Mayıs 2027'ye kadar olan dönemi ifade eder. Bu nedenle rehber 2027 sonrasında otomatik olarak 'izin gerekir' sonucu üretmemeli; işlemin yapıldığı tarihte güncel Genelge ve kurum talimatı yeniden kontrol edilmelidir."},
+        {"type": "bullet", "text": "Genelge bilgisayar ve benzeri demirbaş alımlarını zorunlu haller dışında kısıtlar."},
+        {"type": "bullet", "text": "İstisna talebinde zorunluluk ve alternatiflerin neden yeterli olmadığı somutlaştırılmalıdır."},
+        {"type": "bullet", "text": "Bağlı/ilgili kuruluş talebinin hangi makam üzerinden gönderileceği Genelge ve kurumun güncel yazışma düzeniyle teyit edilmelidir."}
+      ]
+    },
+    {
+      "title": "Önerilen iş akışı",
+      "level": 2,
+      "blocks": [
+        {"type": "table", "headers": ["Adım", "Sorumlu çıktı"], "rows": [
+          ["1. İhtiyaç tespiti", "Dekoratör/teknik birim iş yükü ve performans raporu"],
+          ["2. Envanter kontrolü", "Mevcut cihaz, yükseltme ve yeniden tahsis incelemesi"],
+          ["3. Teknik görüş", "Bakanlık bilgi işlem uygun görüşü ve şartname çerçevesi"],
+          ["4. Bütçe kontrolü", "Ödenek, yaklaşık maliyet ve satın alma yöntemi"],
+          ["5. Genelge kontrolü", "2024/7 veya yerine geçen düzenlemeye göre istisna gereği"],
+          ["6. Yetkili onay", "Kurum içi yazı ve gerekiyorsa üst makam izin dosyası"],
+          ["7. Satın alma", "Rekabetçi, ölçülebilir teknik şartname"],
+          ["8. Kabul ve kayıt", "Test, lisans, taşınır kaydı, ağ kurulumu ve kullanıcı teslimi"]
+        ]}
+      ]
+    },
+    {
+      "title": "Talep yazısında kullanılabilecek çerçeve",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Konu: Dekor tasarım ve teknik çizim iş istasyonu ihtiyacı. Mevcut cihazların kurumsal üretim yazılımlarının güncel sürümlerini çalıştıramaması nedeniyle dekor tasarım, 3B modelleme, görselleştirme ve teknik pafta üretiminde ortaya çıkan gecikmeler; ekli performans ve envanter kayıtlarıyla açıklanır. Mevcut cihaz yükseltme, yeniden tahsis ve ortak kullanım seçeneklerinin neden yeterli olmadığı belirtilir. Bakanlık bilgi işlem biriminin uygun görüşü, ödenek durumu ve yürürlükteki tasarruf tedbirleri kapsamında gerekli izin işlemlerinin başlatılması talep edilir."}
+      ]
+    },
+    {
+      "title": "Teknik şartname ilkeleri",
+      "level": 2,
+      "blocks": [
+        {"type": "bullet", "text": "İşlemci, bellek, grafik, depolama ve ekran için iş yüküne bağlı asgari performans ölçütü tanımlanır."},
+        {"type": "bullet", "text": "Belirli marka veya modele yönlendiren gereksiz ayrıntılardan kaçınılır."},
+        {"type": "bullet", "text": "Lisans, garanti, sürücü desteği, güvenlik kurulumu ve kabul testleri şartnameye eklenir."},
+        {"type": "bullet", "text": "Yapay zekâ, render veya bulut hizmeti kullanılacaksa veri güvenliği ve kişisel/kurumsal veri aktarımı ayrıca değerlendirilir."}
+      ]
+    },
+    {
+      "title": "Muayene, kabul ve kurumsal ağa alma",
+      "level": 2,
+      "blocks": [
+        {"type": "paragraph", "text": "Teslimde yalnız kutu ve model kontrolü yapılmaz. Şartname özellikleri, lisanslar, performans testi, seri numarası, garanti, güvenlik yapılandırması ve çevre birimleri doğrulanır. Taşınır kaydı tamamlanır; yetkili bilgi işlem personeli tarafından kurumsal ağa ve kullanıcı hesabına uygun biçimde alınır."}
+      ]
+    },
+    {
+      "title": "Resmî dayanaklar",
+      "level": 2,
+      "blocks": [
+        {"type": "source", "title": "Kültür ve Turizm Bakanlığı Bilgi İşlem Sistemleri Kullanımına İlişkin Yönerge", "note": "Uygun görüş, birim bilgi işlem sorumlusu, ağ bağlantısı ve teknik şartname hükümleri.", "url": "https://teftis.ktb.gov.tr/TR-264221/kultur-ve-turizm-bakanligi-bilgi-islem-sistemleri-kullanimina-iliskin-yonerge.html"},
+        {"type": "source", "title": "2024/7 Tasarruf Tedbirleri Genelgesi", "note": "17 Mayıs 2024 tarihli Resmî Gazete metni; süre ve istisna işlemi için güncel metni kontrol edin.", "url": "https://www.resmigazete.gov.tr/eskiler/2024/05/20240517-5.pdf"},
+        {"type": "source", "title": "Kamu İhale Kurumu duyurusu", "note": "2024/7 Genelgesinin kamu alımlarına ilişkin resmî duyurusu.", "url": "https://ihale.gov.tr/Duyuru/641/tasarruf_tedbirleriyle_ilgili_20247_sayili_cumhurbaskanligi_genelgesi_hakkinda.html"},
+        {"type": "source", "title": "Kültür ve Turizm Bakanlığı Bilgi Güvenliği Politikaları Yönergesi", "note": "Donanım, yazılım ve veri güvenliği için resmî kaynak sayfası.", "url": "https://teftis.ktb.gov.tr/TR-275423/kultur-ve-turizm-bakanligi-bilgi-guvenligi-politikalari-yonergesi.html"}
+      ]
+    }
+  ]
+}
