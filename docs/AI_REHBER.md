@@ -27,6 +27,18 @@ Yanıtın altındaki **💡 Yaratıcı öneriler** düğmesi ayrı bir pencere a
 - Mevzuat maddesi uydurulmaz; dayanak varsa [K]/[M] ile gösterilir.
 - Öneriler bağlayıcı değildir; uygulanabilirlik ve mevzuat uygunluğu kurum onayına bağlıdır.
 
+## Kullanıcı kotası (Puter User-Pays)
+
+Varsayılan akışta kullanıcıdan bir yöntem seçmesi istenir:
+
+- **Puter ile giriş:** Kullanıcı kendi Puter hesabıyla girer (Google veya e-posta). Sorular Gemini modeline kullanıcının **kendi aylık ücretsiz kotası** üzerinden gider. API anahtarı gerekmez; siteye maliyet çıkmaz.
+- **Misafir olarak devam et:** Puter’in `attempt_temp_user_creation` seçeneğiyle geçici hesap açılır. Kota daha düşüktür; kullanıcı sonradan kayıt olabilir.
+- **Site kotasıyla devam et:** Kullanıcı istemezse mevcut sunucu anahtarı kullanılır. Bu yol site kotasını tüketir.
+
+Seçim `tte-ai-provider` anahtarında saklanır. Puter tercihliyken önce Puter denenir; hata olursa site kotasına, o da olmazsa yerel kaynak özetine düşülür. Model `gemini-3.1-flash-lite`, hız için `reasoning_effort: "minimal"` kullanır.
+
+> Puter üçüncü taraf bir hizmettir; sorular Puter altyapısına iletilir. Ayrıntı: `docs/YAPAY_ZEKA_VE_KVKK.md`.
+
 ## Modlar
 
 - **Yalnız el kitabı:** İnternete çıkmadan yalnız rehber metinlerini kullanır; en hızlı mod.

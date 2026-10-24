@@ -569,6 +569,17 @@
     </div>`;
   }
 
+  async function requestServerIdeas(q, context) {
+    const response = await fetch(aiEndpoint(), {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ question: q, context, mode: "ideas", history: [] }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.answer) throw new Error(data.error || "Öneri üretilemedi.");
+    return data.answer;
+  }
+
   async function askIdeas(question) {
     const q = String(question || "").trim();
     const box = $("#ideasBody");
@@ -583,28 +594,33 @@
       lawResults = searchLaws(q, 4);
       bookResults = await searchHandbook(q, 6);
       context = evidenceText(bookResults, lawResults, []).slice(0, 12000);
-      const response = await fetch(aiEndpoint(), {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ question: q, context, mode: "ideas", history: [] }),
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok || !data.answer) throw new Error(data.error || "Öneri üretilemedi.");
-      const seconds = ((performance.now() - started) / 1000).toFixed(1);
-      renderIdeas(box, data.answer, bookResults, lawResults, seconds, "Gemini ücretsiz katmanı");
-    } catch (error) {
-      const fallback = window.TTEKLiveAI?.askIdeas;
-      if (fallback) {
-        box.innerHTML = '<div class="msg"><b>Yedek model devrede…</b><br><small>Ücretsiz kota dolduğunda tarayıcı modeli devreye girer.</small></div>';
+      const puterIdeas = window.TTEKLiveAI?.askIdeas;
+      const preferPuter = window.TTEKLiveAI?.isPuterPreferred?.() === true;
+      let answer = "";
+      let provider = "";
+      if (preferPuter && puterIdeas) {
+        box.innerHTML = '<div class="msg"><b>Kendi kotanızla öneriler hazırlanıyor…</b><br><small>Puter hesabınızın ücretsiz kotası kullanılıyor.</small></div>';
         try {
-          const answer = await fallback(q, context);
-          const seconds = ((performance.now() - started) / 1000).toFixed(1);
-          renderIdeas(box, answer, bookResults, lawResults, seconds, "Puter üzerinden ücretsiz model");
-          return;
+          answer = await puterIdeas(q, context);
+          provider = "Puter · kendi kotanız";
         } catch (_) {
-          // aşağıdaki hata iletisine düşer
+          answer = await requestServerIdeas(q, context);
+          provider = "Gemini · site kotası (yedek)";
+        }
+      } else {
+        try {
+          answer = await requestServerIdeas(q, context);
+          provider = "Gemini · site kotası";
+        } catch (error) {
+          if (!puterIdeas) throw error;
+          box.innerHTML = '<div class="msg"><b>Site kotası yanıt vermedi.</b><br><small>Kendi Puter kotanızla yeniden deneniyor…</small></div>';
+          answer = await puterIdeas(q, context);
+          provider = "Puter · kendi kotanız";
         }
       }
+      const seconds = ((performance.now() - started) / 1000).toFixed(1);
+      renderIdeas(box, answer, bookResults, lawResults, seconds, provider);
+    } catch (error) {
       box.innerHTML = `<div class="msg"><b>Öneri üretilemedi.</b><br>${escapeHTML(error.message || error)}<div class="notice">Canlı model şu anda yanıt vermiyor. El kitabındaki ilgili başlıkları okumaya devam edebilirsiniz.</div><button class="btn secondary" type="button" data-ideas-retry="1">Yeniden dene</button></div>`;
     }
   }
@@ -748,6 +764,10 @@
     .rag-sources .source{display:block;color:var(--red);margin:7px 0;text-decoration:none}
     .research-answer>h4:first-child{margin-top:0}
     .ideas-open{margin-top:12px}
+    .account-actions{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+    #accountStatus{min-height:22px}
+    #accountStatus .ok{color:#1c6b3a;font-weight:700}
+    #aiAccount .dlgbody{max-height:62vh}
     #ideasBody .msg{margin-bottom:0}
     #ideas .dlgbody{max-height:62vh}
   `;

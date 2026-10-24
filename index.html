@@ -121,6 +121,24 @@
     </form>
   </dialog>
 
+  <dialog id="aiAccount">
+    <div class="dlghead">
+      <div><b>Kendi kotanızla devam edin</b><br><small>Her kullanıcı kendi ücretsiz yapay zekâ kotasını kullanır</small></div>
+      <button class="btn secondary" id="closeAccount" type="button">Kapat</button>
+    </div>
+    <div class="dlgbody">
+      <p>Sorularınız Puter hesabınız üzerinden Gemini modeline gönderilir. API anahtarı gerekmez; siteye ek maliyet çıkmaz.</p>
+      <div class="account-actions">
+        <button class="btn" id="accountSignIn" type="button">Puter ile giriş yap</button>
+        <button class="btn secondary" id="accountGuest" type="button">Misafir olarak devam et</button>
+        <button class="btn secondary" id="accountServer" type="button">Site kotasıyla devam et</button>
+        <button class="btn secondary" id="accountSignOut" type="button" hidden>Çıkış yap</button>
+      </div>
+      <div class="status" id="accountStatus" role="status" aria-live="polite">Giriş yöntemi seçin.</div>
+      <div class="notice">Misafir hesabın kotası daha düşüktür. Giriş yaptığınızda aylık ücretsiz kota hesabınıza tanımlanır. Sorular Puter’e iletilir; kişisel veri paylaşmayın.</div>
+    </div>
+  </dialog>
+
   <script src="arama.js?v=6"></script>
   <script>
     const $ = (selector) => document.querySelector(selector);
@@ -235,6 +253,6 @@
     $("#category").addEventListener("change", () => $("#search").value.trim() ? searchAllContent() : render());
     $("#clear").addEventListener("click", () => { $("#search").value = ""; $("#category").value = ""; render(); });
   </script>
-  <script src="rehber.js?v=11"></script>
+  <script src="rehber.js?v=12"></script>
 </body>
 </html>
