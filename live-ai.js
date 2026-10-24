@@ -164,6 +164,7 @@ Mevzuata aykırı, güvenlik riski taşıyan veya kaynakta olmayan yetki/süre/m
   async function liveAnswer(question) {
     const q = String(question || '').trim();
     if (!q) return;
+    window.TTEKRehber?.setLastQuestion?.(q);
 
     const started = performance.now();
     const userMessage = addMessage(escapeHtml(q), 'user');

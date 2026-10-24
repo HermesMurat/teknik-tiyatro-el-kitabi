@@ -609,16 +609,27 @@
     }
   }
 
+  function latestAskedQuestion() {
+    const bubbles = document.querySelectorAll("#messages .msg.user");
+    const last = bubbles[bubbles.length - 1];
+    return last ? last.textContent.trim() : "";
+  }
+
+  function setLastQuestion(question) {
+    state.lastQuestion = String(question || "").trim();
+  }
+
   function openIdeas(question) {
     const dialog = $("#ideas");
     if (!dialog) return;
-    if (question) {
-      state.lastQuestion = question;
+    const topic = String(question || state.lastQuestion || latestAskedQuestion() || "").trim();
+    if (topic) {
+      state.lastQuestion = topic;
       const input = $("#ideasQuestion");
-      if (input) input.value = question;
+      if (input) input.value = topic;
     }
     dialog.showModal();
-    if (state.lastQuestion) askIdeas(state.lastQuestion);
+    if (topic) askIdeas(topic);
     else $("#ideasQuestion")?.focus();
   }
 
@@ -750,6 +761,7 @@
     openDialog,
     openIdeas,
     setAnswerHandler,
+    setLastQuestion,
     setChapter,
     setSection,
   };
