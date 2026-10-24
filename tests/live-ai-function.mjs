@@ -93,4 +93,18 @@ await handler({
 });
 assert.ok(requestBody.input.length < 16000, "bağlam 14.000 karaktere kırpılmalı");
 
-console.log("Gemini Interactions canlı model işlevi, kaynak filtresi, bağlam sınırı, fikir modu ve CORS doğrulandı.");
+globalThis.fetch = async () => ({
+  ok: false,
+  status: 429,
+  async json() { return { error: { code: 429, status: "RESOURCE_EXHAUSTED" } }; },
+});
+const quota = await handler({
+  httpMethod: "POST",
+  headers: { origin: "https://hermesmurat.github.io", "x-forwarded-for": "192.0.2.15" },
+  body: JSON.stringify({ question: "Kota testi", context: "[K1] kanıt", mode: "book" }),
+});
+assert.equal(quota.statusCode, 429);
+assert.match(JSON.parse(quota.body).error, /kotası doldu/);
+assert.equal(quota.headers["retry-after"], "60");
+
+console.log("Gemini Interactions canlı model işlevi, kaynak filtresi, bağlam sınırı, fikir modu, kota yanıtı ve CORS doğrulandı.");

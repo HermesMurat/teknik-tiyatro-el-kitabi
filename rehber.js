@@ -560,6 +560,15 @@
       ${linkSources(bookResults, lawResults, webResults)}${ideaButton()}`;
   }
 
+  function renderIdeas(box, answer, bookResults, lawResults, seconds, provider) {
+    box.innerHTML = `<div class="msg">
+      <div class="research-answer">${markdownToHtml(answer)}</div>
+      ${linkSources(bookResults, lawResults, [])}
+      <div class="notice"><b>${escapeHTML(provider)}</b> · <b>Bağlayıcı değildir.</b> Bu fikirler el kitabı ve resmî kaynak dayanaklarından üretilmiştir; mevzuata uygunluk, bütçe ve güvenlik onayı kurumun yetkili birimlerine aittir. <small>· ${escapeHTML(seconds)} sn</small></div>
+      <button class="btn secondary" type="button" data-ideas-retry="1">Yeniden üret</button>
+    </div>`;
+  }
+
   async function askIdeas(question) {
     const q = String(question || "").trim();
     const box = $("#ideasBody");
@@ -567,10 +576,13 @@
     state.lastQuestion = q;
     box.innerHTML = '<div class="msg"><b>Öneri atölyesi çalışıyor…</b><br><small>El kitabı ve resmî kaynak dayanakları taranıyor.</small></div>';
     const started = performance.now();
+    let context = "";
+    let bookResults = [];
+    let lawResults = [];
     try {
-      const lawResults = searchLaws(q, 4);
-      const bookResults = await searchHandbook(q, 6);
-      const context = evidenceText(bookResults, lawResults, []).slice(0, 12000);
+      lawResults = searchLaws(q, 4);
+      bookResults = await searchHandbook(q, 6);
+      context = evidenceText(bookResults, lawResults, []).slice(0, 12000);
       const response = await fetch(aiEndpoint(), {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -579,13 +591,20 @@
       const data = await response.json().catch(() => ({}));
       if (!response.ok || !data.answer) throw new Error(data.error || "Öneri üretilemedi.");
       const seconds = ((performance.now() - started) / 1000).toFixed(1);
-      box.innerHTML = `<div class="msg">
-        <div class="research-answer">${markdownToHtml(data.answer)}</div>
-        ${linkSources(bookResults, lawResults, [])}
-        <div class="notice"><b>Bağlayıcı değildir.</b> Bu fikirler el kitabı ve resmî kaynak dayanaklarından üretilmiştir; mevzuata uygunluk, bütçe ve güvenlik onayı kurumun yetkili birimlerine aittir. <small>· ${escapeHTML(seconds)} sn</small></div>
-        <button class="btn secondary" type="button" data-ideas-retry="1">Yeniden üret</button>
-      </div>`;
+      renderIdeas(box, data.answer, bookResults, lawResults, seconds, "Gemini ücretsiz katmanı");
     } catch (error) {
+      const fallback = window.TTEKLiveAI?.askIdeas;
+      if (fallback) {
+        box.innerHTML = '<div class="msg"><b>Yedek model devrede…</b><br><small>Ücretsiz kota dolduğunda tarayıcı modeli devreye girer.</small></div>';
+        try {
+          const answer = await fallback(q, context);
+          const seconds = ((performance.now() - started) / 1000).toFixed(1);
+          renderIdeas(box, answer, bookResults, lawResults, seconds, "Puter üzerinden ücretsiz model");
+          return;
+        } catch (_) {
+          // aşağıdaki hata iletisine düşer
+        }
+      }
       box.innerHTML = `<div class="msg"><b>Öneri üretilemedi.</b><br>${escapeHTML(error.message || error)}<div class="notice">Canlı model şu anda yanıt vermiyor. El kitabındaki ilgili başlıkları okumaya devam edebilirsiniz.</div><button class="btn secondary" type="button" data-ideas-retry="1">Yeniden dene</button></div>`;
     }
   }

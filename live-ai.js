@@ -132,6 +132,29 @@ Yanıtı Türkçe ve kısa yaz. Şu başlıkları kullan: "Kısa cevap", "İlgil
     return answer;
   }
 
+  async function askPuterIdeas(question, context) {
+    await loadPuter();
+    const messages = [{
+      role: 'system',
+      content: `Sen Devlet Tiyatrolarında teknik yönetim alanında deneyimli bir yaratıcı çözüm danışmanısın. Verilen kanıtlara dayanarak uygulanabilir, özgün fikirler üret.
+Mevzuata aykırı, güvenlik riski taşıyan veya kaynakta olmayan yetki/süre/madde uyduran öneri verme. Kanun maddesi uydurma; dayanak varsa [M] veya [K] ile bağla.
+5 fikir üret; her biri için "### 1. Fikir adı", "Nasıl uygulanır:", "Kazanç:", "Risk / ön koşul:" başlıklarını kullan. En az biri düşük maliyetli, biri kurum içi işbirliği, biri süreç sadeleştirme olsun. Türkçe yaz, 500 kelimeyi geçme ve sonda önerilerin bağlayıcı olmadığını belirt.`
+    }, {
+      role: 'user',
+      content: `${context ? `KANIT PAKETİ:\n${context}\n\n` : ''}SORU:\n${question}`
+    }];
+    const response = await window.puter.ai.chat(messages, {
+      model: 'gemini-3.5-flash-lite',
+      temperature: 0.7,
+      max_tokens: 1200,
+    });
+    const answer = puterText(response);
+    if (!answer) throw new Error('Ücretsiz model boş yanıt verdi.');
+    return answer;
+  }
+
+  window.TTEKLiveAI = { askIdeas: askPuterIdeas };
+
   function renderAnswer(node, answer, mode, provider, sources = [], durationMs = 0) {
     const seconds = durationMs ? `${(durationMs / 1000).toFixed(1)} sn` : '';
     const trace = `<div class="research-trace"><b>Araştırma:</b> ${sources.length} resmî kaynak · ${mode === 'book' ? 'yalnız el kitabı' : 'el kitabı + resmî siteler'}${seconds ? ` · yanıt ${seconds}` : ''}</div>`;

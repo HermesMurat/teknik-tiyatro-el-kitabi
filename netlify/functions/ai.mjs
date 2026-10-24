@@ -302,6 +302,14 @@ export async function handler(event) {
 
     if (!response.ok) {
       console.error(`${provider} error`, response.status, data);
+      if (response.status === 429) {
+        return json(
+          429,
+          { error: "Ücretsiz model kotası doldu. Birkaç dakika sonra yeniden deneyin veya “Hızlı · yalnız el kitabı” modunu kullanın." },
+          origin,
+          { "retry-after": "60" }
+        );
+      }
       return json(
         response.status,
         { error: "Canlı model yanıt veremedi. Lütfen kısa süre sonra yeniden deneyin." },
