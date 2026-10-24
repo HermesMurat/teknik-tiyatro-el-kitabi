@@ -268,8 +268,7 @@ Mevzuata aykırı, güvenlik riski taşıyan veya kaynakta olmayan yetki/süre/m
 
   function mountAccountButton() {
     if (accountButton) return;
-    const aiButton = document.querySelector('#openAI');
-    const target = aiButton?.parentElement || document.querySelector('.bar');
+    const target = document.querySelector('.bar');
     if (!target) return;
     accountButton = document.createElement('button');
     accountButton.type = 'button';
@@ -457,7 +456,6 @@ Mevzuata aykırı, güvenlik riski taşıyan veya kaynakta olmayan yetki/süre/m
   }
 
   function bindAccountUI() {
-    document.querySelector('#openAI')?.addEventListener('click', () => { preloadPuter(); });
     document.querySelector('#accountSignIn')?.addEventListener('click', () => signInAndContinue(false));
     document.querySelector('#accountGuest')?.addEventListener('click', () => signInAndContinue(true));
     document.querySelector('#accountServer')?.addEventListener('click', useServerQuota);
@@ -472,8 +470,6 @@ Mevzuata aykırı, güvenlik riski taşıyan veya kaynakta olmayan yetki/süre/m
 
   window.TTEKRehber?.setAnswerHandler(liveAnswer);
 
-  const button = document.querySelector('#openAI');
-  if (button) button.textContent = 'Yapay zekâ ile ara';
   const header = document.querySelector('#ai .dlghead > div');
   if (header) header.innerHTML = '<b>Hızlı Çalışma Rehberi + Öneri Atölyesi</b><br><small>Kendi Puter kotanız veya site kotası · API anahtarı gerekmez</small>';
 })();
