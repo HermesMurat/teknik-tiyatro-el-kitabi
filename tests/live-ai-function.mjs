@@ -66,4 +66,31 @@ await handler({
 assert.equal(requestBody.tools, undefined);
 assert.match(requestBody.input, /Yalnız kitaptan yanıtla/);
 
-console.log("Gemini Interactions canlı model işlevi, kaynak filtresi ve CORS doğrulandı.");
+const ideas = await handler({
+  httpMethod: "POST",
+  headers: { origin: "https://hermesmurat.github.io", "x-forwarded-for": "192.0.2.13" },
+  body: JSON.stringify({
+    question: "Turne yüklemesini hızlandırmak için fikir ver.",
+    context: "[K1] El kitabı kanıtı\n[M1] Resmî kaynak\nhttps://teftis.ktb.gov.tr/ornek.html",
+    mode: "ideas",
+  }),
+});
+assert.equal(ideas.statusCode, 200);
+assert.equal(requestBody.tools, undefined);
+assert.match(requestBody.system_instruction, /yaratıcı çözüm danışmanısın/);
+assert.equal(requestBody.generation_config.max_output_tokens, 1100);
+assert.equal(requestBody.generation_config.temperature, 0.7);
+assert.equal(JSON.parse(ideas.body).sources.length, 1);
+
+await handler({
+  httpMethod: "POST",
+  headers: { origin: "https://hermesmurat.github.io", "x-forwarded-for": "192.0.2.14" },
+  body: JSON.stringify({
+    question: "Uzun bağlam sınırı",
+    context: "x".repeat(30000),
+    mode: "book",
+  }),
+});
+assert.ok(requestBody.input.length < 16000, "bağlam 14.000 karaktere kırpılmalı");
+
+console.log("Gemini Interactions canlı model işlevi, kaynak filtresi, bağlam sınırı, fikir modu ve CORS doğrulandı.");

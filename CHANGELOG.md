@@ -1,5 +1,14 @@
 # Değişiklik günlüğü
 
+## 24 Ekim 2026
+
+- Yapay zekâ yanıtı hızlandırıldı: bağlam 14.000 karaktere, geçmiş son 4 mesaja indirildi; sunucu zaman aşımı 22 saniye, yanıt sınırı 1.500 token (fikir modunda 1.100) oldu.
+- El kitabı taraması ile resmî kaynak araması artık paralel çalışıyor; web araması 2 geçit ve 6,5 saniye zaman aşımıyla sınırlandı, en çok 4 kaynak kullanılıyor.
+- Yanıt yapısı sadeleştirildi: Kısa cevap, İlgili kanun maddeleri, Araştırma özeti, Uygulama adımları, Akıllı çözüm önerileri, Yetki ve güvenlik sınırı.
+- Ayrı **Yaratıcı Öneri Atölyesi** penceresi eklendi; her yanıtın altındaki düğmeyle 5 uygulanabilir fikir üretiliyor.
+- Arayüzde geçen süre ve araştırma özeti gösteriliyor; arama kutularına ve yanıt alanlarına erişilebilirlik etiketleri eklendi.
+- Sunucu kaynak filtresi tarayıcıyla eşitlendi (6 resmî alan adı); canlı model testi fikir modunu ve bağlam sınırını doğruluyor.
+
 ## 26 Temmuz 2026
 
 - 24 özgün bölüm belgesi yeniden işlendi; 1.375 başlık, 121.510 kelime ve bütün tablolar dijital okuyucuya aktarıldı.
