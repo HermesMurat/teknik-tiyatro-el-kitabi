@@ -751,6 +751,7 @@
 
   const style = document.createElement("style");
   style.textContent = `
+    [hidden]{display:none!important}
     .msg h4{margin:14px 0 7px;font:700 18px Georgia}
     .msg ol,.msg ul{margin:7px 0 12px 20px;padding:0}
     .msg li{margin:6px 0}

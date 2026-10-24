@@ -22,7 +22,7 @@ Ad, e-posta, telefon gibi kimlik bilgileri istenmez. Kullanıcı soru metnine ki
 ## Saklama
 
 - Tarayıcı tercihi, kullanıcı tarayıcı verilerini silene kadar saklanır.
-- Sunucu tarafında soru metni kalıcı olarak saklanmaz; hız sınırı sayaçları geçicidir.
+- Sunucu tarafında soru metni uygulama veritabanına yazılmaz; hız sınırı sayaçları geçicidir. Barındırma sağlayıcısının teknik günlükleri için kendi saklama politikası geçerlidir.
 - Üçüncü taraf sağlayıcıların kendi saklama politikaları geçerlidir.
 
 ## Kullanıcı hakları ve sınırlar

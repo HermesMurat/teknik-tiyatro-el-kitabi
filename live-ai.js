@@ -431,16 +431,21 @@ Mevzuata aykırı, güvenlik riski taşıyan veya kaynakta olmayan yetki/süre/m
     }
   }
 
+  function restorePendingQuestion() {
+    if (!pendingQuestion) return;
+    const input = document.querySelector('#question');
+    if (input) input.value = pendingQuestion;
+    pendingQuestion = null;
+  }
+
   function bindAccountUI() {
     document.querySelector('#openAI')?.addEventListener('click', () => { loadPuter().catch(() => {}); });
     document.querySelector('#accountSignIn')?.addEventListener('click', () => signInAndContinue(false));
     document.querySelector('#accountGuest')?.addEventListener('click', () => signInAndContinue(true));
     document.querySelector('#accountServer')?.addEventListener('click', useServerQuota);
     document.querySelector('#accountSignOut')?.addEventListener('click', signOutPuter);
-    document.querySelector('#closeAccount')?.addEventListener('click', () => {
-      pendingQuestion = null;
-      closeAccountDialog();
-    });
+    document.querySelector('#closeAccount')?.addEventListener('click', () => { closeAccountDialog(); });
+    document.querySelector('#aiAccount')?.addEventListener('close', restorePendingQuestion);
     mountAccountButton();
   }
 
