@@ -2,6 +2,12 @@
 
 ## 24 Ekim 2026
 
+- Kullanıcı kotası eklendi: yapay zekâ ilk kullanımda “Puter ile giriş”, “Misafir olarak devam et” veya “Site kotasıyla devam et” seçeneği sunuyor. Puter yolu kullanıcının kendi aylık ücretsiz kotasını kullanır; API anahtarı gerekmez.
+- Puter modeli `gemini-3.1-flash-lite` olarak düzeltildi; hız için `reasoning_effort: "minimal"` ayarlandı.
+- Puter tercihliyken önce kullanıcı kotası, hata durumunda site kotası, o da olmazsa yerel kaynak özeti devreye giriyor.
+- Hesap durumu, kalan kota yüzdesi ve çıkış düğmesi eklendi; tercih tarayıcıda saklanıyor.
+- `docs/YAPAY_ZEKA_VE_KVKK.md` ile veri akışı ve KVKK notu eklendi.
+
 - Yapay zekâ yanıtı hızlandırıldı: bağlam 14.000 karaktere, geçmiş son 4 mesaja indirildi; sunucu zaman aşımı 22 saniye, yanıt sınırı 1.500 token (fikir modunda 1.100) oldu.
 - El kitabı taraması ile resmî kaynak araması artık paralel çalışıyor; web araması 2 geçit ve 6,5 saniye zaman aşımıyla sınırlandı, en çok 4 kaynak kullanılıyor.
 - Yanıt yapısı sadeleştirildi: Kısa cevap, İlgili kanun maddeleri, Araştırma özeti, Uygulama adımları, Akıllı çözüm önerileri, Yetki ve güvenlik sınırı.
