@@ -194,14 +194,20 @@ Mevzuata aykırı, güvenlik riski taşıyan veya kaynakta olmayan yetki/süre/m
         }),
       });
       const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.error || 'Canlı model yanıt veremedi.');
+      if (!response.ok) {
+        const failure = new Error(data.error || 'Canlı model yanıt veremedi.');
+        failure.quota = response.status === 429;
+        throw failure;
+      }
 
       const provider = data.provider === 'gemini' ? 'Gemini ücretsiz katmanı' : 'canlı model';
       renderAnswer(loading, data.answer, mode, provider, data.sources, performance.now() - started);
       history.push({ role: 'user', content: q }, { role: 'assistant', content: data.answer });
     } catch (error) {
       try {
-        loading.innerHTML = '<strong>Ücretsiz modele bağlanılıyor…</strong><br><small class="research-timer">API anahtarı gerektirmeyen yedek model hazırlanıyor.</small>';
+        loading.innerHTML = error.quota
+          ? '<strong>Ücretsiz model kotası doldu.</strong><br><small class="research-timer">Yedek model deneniyor; bu birkaç saniye sürebilir.</small>'
+          : '<strong>Ücretsiz modele bağlanılıyor…</strong><br><small class="research-timer">API anahtarı gerektirmeyen yedek model hazırlanıyor.</small>';
         const answer = await askPuter(q, context || await collectContext(q, mode));
         renderAnswer(loading, answer, mode, 'Puter üzerinden ücretsiz Gemini', [], performance.now() - started);
         history.push({ role: 'user', content: q }, { role: 'assistant', content: answer });
