@@ -16,6 +16,21 @@
   let pendingQuestion = null;
   let accountButton = null;
   let memoryPreference = '';
+  let puterPreloading = false;
+
+  // Puter kütüphanesini sayfa açılışında arka planda yükle; giriş popup'ının engellenmesini önler.
+  function preloadPuter() {
+    if (typeof document === 'undefined' || typeof window === 'undefined') return;
+    if (!document.head) return; // Gerçek browser DOM değilse yüklemeyi atla
+    if (puterPreloading || puterLoader || (window.puter?.ai?.chat)) return;
+    puterPreloading = true;
+    const script = document.createElement('script');
+    script.src = PUTER_SRC;
+    script.async = true;
+    script.onload = () => { puterPreloading = false; };
+    script.onerror = () => { puterPreloading = false; };
+    document.head.appendChild(script);
+  }
 
   function escapeHtml(value) {
     return String(value ?? '').replace(/[&<>"']/g, (ch) => ({
@@ -270,7 +285,10 @@ Mevzuata aykırı, güvenlik riski taşıyan veya kaynakta olmayan yetki/süre/m
     const status = document.querySelector('#accountStatus');
     if (status) status.textContent = guest ? 'Misafir hesap hazırlanıyor…' : 'Puter giriş penceresi açılıyor…';
     try {
-      await loadPuter();
+      // Puter sayfa açılışında önceden yüklenmiştir; signIn'i anında çağırmak popup engelenmesini önler.
+      if (!window.puter?.auth?.signIn) {
+        throw new Error('Puter henüz yüklenmedi. Lütfen bir saniye bekleyip tekrar deneyin.');
+      }
       const result = guest
         ? await window.puter.auth.signIn({ attempt_temp_user_creation: true })
         : await window.puter.auth.signIn();
@@ -439,7 +457,7 @@ Mevzuata aykırı, güvenlik riski taşıyan veya kaynakta olmayan yetki/süre/m
   }
 
   function bindAccountUI() {
-    document.querySelector('#openAI')?.addEventListener('click', () => { loadPuter().catch(() => {}); });
+    document.querySelector('#openAI')?.addEventListener('click', () => { preloadPuter(); });
     document.querySelector('#accountSignIn')?.addEventListener('click', () => signInAndContinue(false));
     document.querySelector('#accountGuest')?.addEventListener('click', () => signInAndContinue(true));
     document.querySelector('#accountServer')?.addEventListener('click', useServerQuota);
@@ -450,6 +468,7 @@ Mevzuata aykırı, güvenlik riski taşıyan veya kaynakta olmayan yetki/süre/m
   }
 
   bindAccountUI();
+  try { preloadPuter(); } catch (_) {}
 
   window.TTEKRehber?.setAnswerHandler(liveAnswer);
 
