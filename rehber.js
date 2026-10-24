@@ -715,7 +715,6 @@
   }
 
   function bindUI() {
-    $("#openAI")?.addEventListener("click", () => openDialog());
     $("#closeAI")?.addEventListener("click", () => $("#ai")?.close());
     $("#closeIdeas")?.addEventListener("click", () => $("#ideas")?.close());
     $("#aiForm")?.addEventListener("submit", (event) => {

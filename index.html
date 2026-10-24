@@ -59,7 +59,6 @@
   <header>
     <div class="bar">
       <div class="brand">Devlet Tiyatroları<small>Çalışma ve uygulama rehberi</small></div>
-      <button class="btn" id="openAI">Yapay zekâ ile araştır</button>
     </div>
   </header>
   <main>
@@ -249,10 +248,18 @@
       })
       .catch(() => { $("#count").textContent = "Bölüm verisi yüklenemedi"; });
 
-    $("#searchForm").addEventListener("submit", (event) => { event.preventDefault(); searchAllContent().catch(() => { $("#count").textContent = "Arama tamamlanamadı"; }); });
+    $("#searchForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const input = $("#search");
+      const question = input?.value.trim() || "";
+      if (!question) return;
+      input.value = "";
+      window.TTEKRehber?.openDialog(question);
+      window.TTEKRehber?.answer(question);
+    });
     $("#category").addEventListener("change", () => $("#search").value.trim() ? searchAllContent() : render());
     $("#clear").addEventListener("click", () => { $("#search").value = ""; $("#category").value = ""; render(); });
   </script>
-  <script src="rehber.js?v=13"></script>
+  <script src="rehber.js?v=14"></script>
 </body>
 </html>
