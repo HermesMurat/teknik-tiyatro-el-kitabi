@@ -121,6 +121,7 @@
     currentSection: null,
     loadingAll: null,
     answerHandler: null,
+    lastQuestion: "",
   };
 
   const $ = (selector) => document.querySelector(selector);
@@ -197,7 +198,7 @@
     if (state.loadingAll) return state.loadingAll;
     state.loadingAll = (async () => {
       const index = await ensureIndex();
-      const batchSize = 6;
+      const batchSize = 10;
       for (let start = 0; start < index.length; start += batchSize) {
         await Promise.all(index.slice(start, start + batchSize).map((item) => loadChapter(item.number)));
       }
@@ -247,7 +248,7 @@
     return result;
   }
 
-  async function searchHandbook(question, limit = 7) {
+  async function searchHandbook(question, limit = 5) {
     const chapters = await loadAllChapters();
     const queryTokens = tokens(question);
     const preferred = state.currentSection
@@ -294,7 +295,7 @@
     return lawMatches.length > 0 || /(mevzuat|kanun|yönetmelik|yönerge|madde|hukuk|yetki|zorunlu|yasak|uygun mu|yapılabilir mi)/i.test(question);
   }
 
-  async function timedFetch(url, milliseconds = 16000) {
+  async function timedFetch(url, milliseconds = 7000) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), milliseconds);
     try {
@@ -338,13 +339,12 @@
     const encoded = encodeURIComponent(query);
     const gateways = [
       `https://s.jina.ai/?q=${encoded}`,
-      `https://r.jina.ai/https://www.google.com/search?q=${encoded}`,
       `https://r.jina.ai/https://www.bing.com/search?q=${encoded}`,
     ];
     let lastError = null;
     for (const gateway of gateways) {
       try {
-        const response = await timedFetch(gateway);
+        const response = await timedFetch(gateway, 6500);
         const markdown = await response.text();
         const parsed = parseSearchMarkdown(markdown, officialOnly);
         if (parsed.length) return parsed;
@@ -357,9 +357,9 @@
   }
 
   async function readSource(result, question) {
-    if (!result.url || result.snippet?.length > 260) return result;
+    if (!result.url || result.snippet?.length > 200) return result;
     try {
-      const response = await timedFetch(`https://r.jina.ai/${result.url}`, 13000);
+      const response = await timedFetch(`https://r.jina.ai/${result.url}`, 5000);
       const text = await response.text();
       const queryTokens = tokens(question);
       const paragraphs = text
@@ -387,8 +387,9 @@
 
     const unique = [...new Map(results.filter((item) => item.url).map((item) => [item.url, item])).values()]
       .filter((item) => isOfficialURL(item.url))
-      .slice(0, 6);
-    return Promise.all(unique.map((item) => readSource(item, question)));
+      .slice(0, 4);
+    return Promise.all(unique.slice(0, 3).map((item) => readSource(item, question))
+      .concat(unique.slice(3)));
   }
 
   function evidenceText(bookResults, lawResults, webResults) {
@@ -407,14 +408,17 @@
   }
 
   async function buildLiveContext(question, options = {}) {
-    const bookResults = await searchHandbook(question, 8);
     const lawResults = searchLaws(question, 5);
-    const mode = options.mode === "book" ? "book" : "hybrid";
+    const mode = options.mode === "book" || options.mode === "ideas" ? "book" : "hybrid";
     const legal = isLegalQuestion(question, lawResults);
-    const webResults = mode === "book"
-      ? []
-      : await researchWeb(question, true, legal, lawResults);
-    return evidenceText(bookResults, lawResults, webResults).slice(0, 30000);
+    const webPromise = mode === "book"
+      ? Promise.resolve([])
+      : researchWeb(question, true, legal, lawResults);
+    const [bookResults, webResults] = await Promise.all([
+      searchHandbook(question, 6),
+      webPromise,
+    ]);
+    return evidenceText(bookResults, lawResults, webResults).slice(0, 12000);
   }
 
   function setAnswerHandler(handler) {
@@ -481,12 +485,36 @@
     return `<div class="rag-sources"><b>Kullanılan kaynaklar</b>${[...book, ...laws, ...web].join("")}</div>`;
   }
 
+  function ideaButton() {
+    return '<button class="btn secondary ideas-open" type="button" data-ideas="1">💡 Yaratıcı öneriler</button>';
+  }
+
+  function aiEndpoint() {
+    return window.LIVE_AI_ENDPOINT || (
+      location.hostname === "hermesmurat.github.io"
+        ? "https://teknik-tiyatro-el-kitabi.netlify.app/api/ai"
+        : "/api/ai"
+    );
+  }
+
+  function markdownToHtml(text) {
+    const safe = escapeHTML(text)
+      .replace(/^###\s+(.+)$/gm, "<h4>$1</h4>")
+      .replace(/^##\s+(.+)$/gm, "<h4>$1</h4>")
+      .replace(/^\s*[-•]\s+(.+)$/gm, "<li>$1</li>")
+      .replace(/(<li>.*<\/li>\n?)+/g, "<ul>$&</ul>")
+      .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+      .replace(/\n{2,}/g, "</p><p>")
+      .replace(/\n/g, "<br>");
+    return `<p>${safe}</p>`;
+  }
+
   function renderModelAnswer(text, bookResults, lawResults, webResults) {
     const safe = escapeHTML(text)
       .replace(/^###?\s+(.+)$/gm, "<h4>$1</h4>")
       .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
       .replace(/\n/g, "<br>");
-    return `<div class="research-answer">${safe}</div>${linkSources(bookResults, lawResults, webResults)}`;
+    return `<div class="research-answer">${safe}</div>${linkSources(bookResults, lawResults, webResults)}${ideaButton()}`;
   }
 
   function renderEvidenceAnswer(question, bookResults, lawResults, webResults) {
@@ -529,7 +557,75 @@
         ${lawCards}${steps}${bookCards}${webCards}
         <div class="notice"><b>Yanıt biçimi:</b> Bu tarayıcıda yerleşik dil modeli kullanılamadığı için yorum uydurmak yerine bulunan metinler ve işlem adımları doğrudan gösterildi.</div>
       </div>
-      ${linkSources(bookResults, lawResults, webResults)}`;
+      ${linkSources(bookResults, lawResults, webResults)}${ideaButton()}`;
+  }
+
+  function renderIdeas(box, answer, bookResults, lawResults, seconds, provider) {
+    box.innerHTML = `<div class="msg">
+      <div class="research-answer">${markdownToHtml(answer)}</div>
+      ${linkSources(bookResults, lawResults, [])}
+      <div class="notice"><b>${escapeHTML(provider)}</b> · <b>Bağlayıcı değildir.</b> Bu fikirler el kitabı ve resmî kaynak dayanaklarından üretilmiştir; mevzuata uygunluk, bütçe ve güvenlik onayı kurumun yetkili birimlerine aittir. <small>· ${escapeHTML(seconds)} sn</small></div>
+      <button class="btn secondary" type="button" data-ideas-retry="1">Yeniden üret</button>
+    </div>`;
+  }
+
+  async function askIdeas(question) {
+    const q = String(question || "").trim();
+    const box = $("#ideasBody");
+    if (!box || q.length < 3) return;
+    state.lastQuestion = q;
+    box.innerHTML = '<div class="msg"><b>Öneri atölyesi çalışıyor…</b><br><small>El kitabı ve resmî kaynak dayanakları taranıyor.</small></div>';
+    const started = performance.now();
+    let context = "";
+    let bookResults = [];
+    let lawResults = [];
+    try {
+      lawResults = searchLaws(q, 4);
+      bookResults = await searchHandbook(q, 6);
+      context = evidenceText(bookResults, lawResults, []).slice(0, 12000);
+      const response = await fetch(aiEndpoint(), {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ question: q, context, mode: "ideas", history: [] }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.answer) throw new Error(data.error || "Öneri üretilemedi.");
+      const seconds = ((performance.now() - started) / 1000).toFixed(1);
+      renderIdeas(box, data.answer, bookResults, lawResults, seconds, "Gemini ücretsiz katmanı");
+    } catch (error) {
+      const fallback = window.TTEKLiveAI?.askIdeas;
+      if (fallback) {
+        box.innerHTML = '<div class="msg"><b>Yedek model devrede…</b><br><small>Ücretsiz kota dolduğunda tarayıcı modeli devreye girer.</small></div>';
+        try {
+          const answer = await fallback(q, context);
+          const seconds = ((performance.now() - started) / 1000).toFixed(1);
+          renderIdeas(box, answer, bookResults, lawResults, seconds, "Puter üzerinden ücretsiz model");
+          return;
+        } catch (_) {
+          // aşağıdaki hata iletisine düşer
+        }
+      }
+      box.innerHTML = `<div class="msg"><b>Öneri üretilemedi.</b><br>${escapeHTML(error.message || error)}<div class="notice">Canlı model şu anda yanıt vermiyor. El kitabındaki ilgili başlıkları okumaya devam edebilirsiniz.</div><button class="btn secondary" type="button" data-ideas-retry="1">Yeniden dene</button></div>`;
+    }
+  }
+
+  function openIdeas(question) {
+    const dialog = $("#ideas");
+    if (!dialog) return;
+    if (question) {
+      state.lastQuestion = question;
+      const input = $("#ideasQuestion");
+      if (input) input.value = question;
+    }
+    dialog.showModal();
+    if (state.lastQuestion) askIdeas(state.lastQuestion);
+    else $("#ideasQuestion")?.focus();
+  }
+
+  function prefetchChapters() {
+    const connection = navigator.connection || {};
+    if (connection.saveData || /(^|-)2g$/.test(connection.effectiveType || "")) return;
+    loadAllChapters().catch(() => {});
   }
 
   function messagesElement() {
@@ -551,17 +647,21 @@
 
   async function answer(question) {
     const mode = document.querySelector('input[name="mode"]:checked')?.value || "hybrid";
+    state.lastQuestion = question;
     addMessage("user", question);
-    const thinking = addMessage("assistant", "Rehberin tam metni ve ilgili resmî kamu kaynakları araştırılıyor…", false, "research-thinking");
+    const thinking = addMessage("assistant", "El kitabı ve resmî kaynaklar birlikte taranıyor…", false, "research-thinking");
 
     try {
-      const bookResults = await searchHandbook(question, 7);
       const lawResults = searchLaws(question);
       const legal = isLegalQuestion(question, lawResults);
-      const webResults = mode === "book"
-        ? []
-        : await researchWeb(question, true, legal, lawResults);
-      if (thinking) thinking.textContent = "Bulunan kaynaklar birlikte değerlendiriliyor…";
+      const webPromise = mode === "book"
+        ? Promise.resolve([])
+        : researchWeb(question, true, legal, lawResults);
+      const [bookResults, webResults] = await Promise.all([
+        searchHandbook(question, 6),
+        webPromise,
+      ]);
+      if (thinking) thinking.textContent = "Bulunan kaynaklar değerlendiriliyor…";
       const modelAnswer = await synthesize(question, bookResults, lawResults, webResults);
       thinking?.remove();
       const html = modelAnswer
@@ -584,11 +684,13 @@
     dialog.showModal();
     if (prefill) $("#question").value = prefill;
     $("#question")?.focus();
+    prefetchChapters();
   }
 
   function bindUI() {
     $("#openAI")?.addEventListener("click", () => openDialog());
     $("#closeAI")?.addEventListener("click", () => $("#ai")?.close());
+    $("#closeIdeas")?.addEventListener("click", () => $("#ideas")?.close());
     $("#aiForm")?.addEventListener("submit", (event) => {
       event.preventDefault();
       const input = $("#question");
@@ -598,7 +700,22 @@
       const handler = state.answerHandler || answer;
       handler(question);
     });
+    $("#ideasForm")?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const input = $("#ideasQuestion");
+      const question = input?.value.trim() || state.lastQuestion;
+      if (!question) return;
+      askIdeas(question);
+    });
     document.addEventListener("click", (event) => {
+      if (event.target.closest("[data-ideas]")) {
+        openIdeas(state.lastQuestion);
+        return;
+      }
+      if (event.target.closest("[data-ideas-retry]")) {
+        askIdeas(state.lastQuestion);
+        return;
+      }
       const button = event.target.closest("[data-ask-context]");
       if (!button) return;
       openDialog(button.dataset.askContext || "");
@@ -615,17 +732,23 @@
     .rag-law:last-child,.evidence-card:last-child{border-bottom:0}
     .rag-law p,.evidence-card p{margin:5px 0}
     .rag-status{font-size:12px;color:var(--muted);margin-top:13px}
+    .research-trace{font-size:12px;color:var(--muted);background:#f7efe3;border:1px solid var(--line);border-radius:8px;padding:7px 10px;margin-bottom:10px}
     .rag-sources{margin-top:15px;padding-top:12px;border-top:1px solid var(--line)}
     .rag-sources .source{display:block;color:var(--red);margin:7px 0;text-decoration:none}
     .research-answer>h4:first-child{margin-top:0}
+    .ideas-open{margin-top:12px}
+    #ideasBody .msg{margin-bottom:0}
+    #ideas .dlgbody{max-height:62vh}
   `;
   document.head.append(style);
 
   window.TTEKRehber = {
     answer,
+    askIdeas,
     buildLiveContext,
     loadAllChapters,
     openDialog,
+    openIdeas,
     setAnswerHandler,
     setChapter,
     setSection,

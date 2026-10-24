@@ -75,12 +75,12 @@
       </div>
     </section>
     <form class="search" id="searchForm">
-      <input id="search" type="search" placeholder="Oyuncu, rejisör, müdür, dekoratör bilgisayarı, turne, İSG…">
+      <input id="search" type="search" aria-label="Rehberde ara" placeholder="Oyuncu, rejisör, müdür, dekoratör bilgisayarı, turne, İSG…">
       <button class="btn">Ara</button>
     </form>
     <div class="tools">
       <span id="count">Yükleniyor…</span>
-      <select id="category"><option value="">Tüm bölümler</option></select>
+      <select id="category" aria-label="Bölüm kategorisi"><option value="">Tüm bölümler</option></select>
       <button class="btn secondary" id="clear" type="button">Temizle</button>
     </div>
     <section class="grid" id="grid"></section>
@@ -92,17 +92,32 @@
       <div><b>Bağlamlı Araştırma Rehberi</b><br><small>Rehberin tam metni ve ilgili resmî kamu kaynakları</small></div>
       <button class="btn secondary" id="closeAI">Kapat</button>
     </div>
-    <div class="dlgbody" id="messages">
+    <div class="dlgbody" id="messages" role="log" aria-live="polite" aria-label="Yapay zekâ yanıtları">
       <div class="msg">Teknik, sanatsal veya idarî bir durum hakkında sorun. Rehber; ilgili bölüm metinlerini ve konuya doğrudan ilişkin resmî kamu kaynaklarını birlikte tarar.</div>
     </div>
     <form class="ai-form" id="aiForm">
-      <textarea id="question" maxlength="1200" rows="3" placeholder="Örn. Sahne motorunun periyodik kontrol süresi geçmişse temsil yapılabilir mi?"></textarea>
+      <textarea id="question" maxlength="1200" rows="3" aria-label="Sorunuz" placeholder="Örn. Sahne motorunun periyodik kontrol süresi geçmişse temsil yapılabilir mi?"></textarea>
       <div class="modes">
-        <label><input type="radio" name="mode" value="book"> Yalnız el kitabı</label>
-        <label><input type="radio" name="mode" value="hybrid" checked> Rehber + resmî kaynaklar</label>
+        <label><input type="radio" name="mode" value="book"> Hızlı · yalnız el kitabı</label>
+        <label><input type="radio" name="mode" value="hybrid" checked> Araştırmalı · rehber + resmî kaynaklar</label>
       </div>
-      <div class="status">İnternet araştırması yalnız konuya doğrudan ilişkin resmî kamu kurumlarının sayfalarıyla sınırlıdır.</div>
+      <div class="status">Hızlı mod saniyeler içinde yanıt verir; araştırmalı mod resmî kamu sitelerini de tarar.</div>
       <button class="btn" type="submit">Araştır ve yanıtla</button>
+    </form>
+  </dialog>
+
+  <dialog id="ideas">
+    <div class="dlghead">
+      <div><b>Yaratıcı Öneri Atölyesi</b><br><small>Kanun ve el kitabı sınırları içinde uygulanabilir fikirler</small></div>
+      <button class="btn secondary" id="closeIdeas" type="button">Kapat</button>
+    </div>
+    <div class="dlgbody" id="ideasBody" role="log" aria-live="polite" aria-label="Yaratıcı öneriler">
+      <div class="msg">Bir soru yanıtlandıktan sonra “Yaratıcı öneriler” düğmesine basın; alternatif çözümler burada listelenir.</div>
+    </div>
+    <form class="ai-form" id="ideasForm">
+      <textarea id="ideasQuestion" maxlength="1200" rows="2" aria-label="Fikir üretilecek konu" placeholder="Fikir üretilecek konu…"></textarea>
+      <div class="status">Öneriler bağlayıcı değildir; uygulanabilirlik, bütçe ve mevzuat uygunluğu kurum onayına bağlıdır.</div>
+      <button class="btn" type="submit">Öneri üret</button>
     </form>
   </dialog>
 
@@ -220,6 +235,6 @@
     $("#category").addEventListener("change", () => $("#search").value.trim() ? searchAllContent() : render());
     $("#clear").addEventListener("click", () => { $("#search").value = ""; $("#category").value = ""; render(); });
   </script>
-  <script src="rehber.js?v=9"></script>
+  <script src="rehber.js?v=10"></script>
 </body>
 </html>

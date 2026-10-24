@@ -2,8 +2,20 @@ import { createHash } from "node:crypto";
 
 const OPENAI_URL = "https://api.openai.com/v1/responses";
 const GEMINI_INTERACTIONS_URL = "https://generativelanguage.googleapis.com/v1beta/interactions";
-const officialDomains = new Set(["teftis.ktb.gov.tr", "devtiyatro.gov.tr"]);
+const officialDomains = new Set([
+  "teftis.ktb.gov.tr",
+  "devtiyatro.gov.tr",
+  "resmigazete.gov.tr",
+  "ihale.gov.tr",
+  "sbb.gov.tr",
+  "hmb.gov.tr",
+]);
 const rateLimits = new Map();
+const MAX_CONTEXT = 14000;
+const MAX_QUESTION = 1600;
+const MAX_ANSWER_TOKENS = 1500;
+const MAX_IDEA_TOKENS = 1100;
+const REQUEST_TIMEOUT_MS = 22000;
 
 const allowedOrigins = new Set([
   "https://hermesmurat.github.io",
@@ -121,6 +133,42 @@ function extractGeminiResult(response, context) {
   return { answer, sources: contextSources(context) };
 }
 
+const ANSWER_INSTRUCTIONS = `Sen Türkiye Cumhuriyeti Devlet Tiyatrolarında teknik yönetim için çalışan bir uzman rehbersin. Hızlı, doğru ve kısa yanıt ver.
+
+ÖNCELİK SIRASI:
+1. El kitabı kanıt paketini ([K]) kullan.
+2. Yalnız resmî kamu kaynaklarını ([M]) kullan.
+3. Kaynakta açıkça bulunmayan görev, yetki, süre, madde numarası, tarih veya kurumsal uygulama uydurma.
+
+YANIT BİÇİMİ (başlıkları aynen kullan):
+## Kısa cevap
+En fazla 100 kelime; doğrudan hüküm.
+## İlgili kanun maddeleri
+[M] varsa ilgili madde/başlık; yoksa "Doğrudan hüküm bulunamadı" yaz.
+## Araştırma özeti
+Hangi [K] bölüm/başlık ve hangi resmî site incelendi; tek kısa paragraf.
+## Uygulama adımları
+3-6 numaralı, uygulanabilir adım.
+## Akıllı çözüm önerileri
+2-3 kısa ve pratik fikir; bağlayıcı olmadığını belirt.
+## Yetki ve güvenlik sınırı
+Kimin karar vermesi gerektiği; yakın tehlike varsa işi durdurma uyarısı.
+
+Kurallar: Türkçe yaz; toplam 450 kelimeyi geçme; gereksiz gerekçe ve tekrar yapma; hukuki mütalaa verdiğini iddia etme; [K] ve [M] işaretlerini koru.`;
+
+const IDEAS_INSTRUCTIONS = `Sen Devlet Tiyatrolarında teknik yönetim alanında deneyimli bir yaratıcı çözüm danışmanısın. El kitabı ve resmî kaynak kanıtlarına dayanarak uygulanabilir, özgün fikirler üret.
+
+KURALLAR:
+- Mevzuata aykırı, güvenlik riski taşıyan veya kaynakta olmayan yetki/süre/madde uyduran öneri verme.
+- Kanun maddesi uydurma; dayanak varsa [M] veya [K] ile bağla.
+- 5 fikir üret. Her fikri şu biçimde yaz:
+  "### 1. Fikir adı"
+  "Nasıl uygulanır:" 2-3 cümle
+  "Kazanç:" tek cümle
+  "Risk / ön koşul:" tek cümle
+- En az biri düşük maliyetli, biri kurum içi işbirliği, biri süreç sadeleştirme olsun.
+- Türkçe yaz, 500 kelimeyi geçme. Sonda tek cümleyle önerilerin bağlayıcı olmadığını belirt.`;
+
 export async function handler(event) {
   const origin = event.headers?.origin || "";
   if (!allowedOrigins.has(origin)) {
@@ -148,35 +196,18 @@ export async function handler(event) {
     return json(400, { error: "Geçersiz istek." }, origin);
   }
 
-  const question = String(payload.question || "").trim().slice(0, 2500);
-  const context = String(payload.context || "").trim().slice(0, 30000);
-  const conversation = Array.isArray(payload.history) ? payload.history.slice(-6) : [];
-  const mode = payload.mode === "book" ? "book" : "hybrid";
+  const question = String(payload.question || "").trim().slice(0, MAX_QUESTION);
+  const context = String(payload.context || "").trim().slice(0, MAX_CONTEXT);
+  const conversation = Array.isArray(payload.history) ? payload.history.slice(-4) : [];
+  const mode = ["book", "hybrid", "ideas"].includes(payload.mode) ? payload.mode : "hybrid";
   if (question.length < 3) return json(400, { error: "Lütfen daha açık bir soru yazın." }, origin);
 
-  const instructions = `Sen Türkiye Cumhuriyeti Devlet Tiyatrolarında teknik yönetim için çalışan bir uzman rehbersin.
-
-ÖNCELİK SIRASI:
-1. Önce kullanıcının gönderdiği Tiyatro Teknik Müdürlüğü El Kitabı kanıt paketini kullan.
-2. Web araması açıksa yalnız teftis.ktb.gov.tr ve devtiyatro.gov.tr alanlarındaki Devlet Tiyatroları kaynaklarını kullan.
-3. Kaynakta açıkça bulunmayan görev, yetki, süre, madde numarası, tarih veya kurumsal uygulama uydurma.
-4. Kaynaklar yetersiz veya çelişkiliyse bunu doğrudan belirt; genel mesleki bilgi ile bağlayıcı kurum hükmünü birbirine karıştırma.
-
-YANIT BİÇİMİ:
-- Önce doğrudan ve anlaşılır değerlendirme.
-- Sonra "Dayanak" başlığında ilgili mevzuat veya el kitabı bölümleri.
-- "İzlenecek yol" başlığında uygulanabilir, sıralı adımlar.
-- "Yetki ve yönlendirme" başlığında kimin karar vermesi gerektiği.
-- Kaynak adı ve bağlantısını belirt; el kitabı kanıtlarını [K], mevzuat kanıtlarını [M] diye işaretle.
-- Yanıtı Türkçe yaz, gereksiz uzatma yapma.
-
-GÜVENLİK:
-Ciddi ve yakın tehlike, yangın, kaldırma ekipmanı, elektrik, rigging veya acil çıkış sorunlarında üretim ya da temsil devamlılığını can güvenliğinin önüne koyma. Belirsizlikte işi güvenli biçimde durdurmayı ve yetkili teknik/İSG değerlendirmesini öner. Hukuki mütalaa verdiğini iddia etme.`;
+  const instructions = mode === "ideas" ? IDEAS_INSTRUCTIONS : ANSWER_INSTRUCTIONS;
 
   const input = [
     ...conversation.map((message) => ({
       role: message.role === "assistant" ? "assistant" : "user",
-      content: String(message.content || "").slice(0, 3000),
+      content: String(message.content || "").slice(0, 1500),
     })),
     {
       role: "user",
@@ -185,7 +216,7 @@ Ciddi ve yakın tehlike, yangın, kaldırma ekipmanı, elektrik, rigging veya ac
   ];
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 45000);
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   try {
     const useGemini = Boolean(process.env.GEMINI_API_KEY) && process.env.AI_PROVIDER !== "openai";
     let response;
@@ -209,8 +240,8 @@ Ciddi ve yakın tehlike, yangın, kaldırma ekipmanı, elektrik, rigging veya ac
         ].filter(Boolean).join("\n\n"),
         store: false,
         generation_config: {
-          temperature: 0.2,
-          max_output_tokens: 2200,
+          temperature: mode === "ideas" ? 0.7 : 0.25,
+          max_output_tokens: mode === "ideas" ? MAX_IDEA_TOKENS : MAX_ANSWER_TOKENS,
         },
       };
       response = await fetch(GEMINI_INTERACTIONS_URL, {
@@ -231,9 +262,9 @@ Ciddi ve yakın tehlike, yangın, kaldırma ekipmanı, elektrik, rigging veya ac
         instructions,
         input,
         reasoning: {
-          effort: process.env.OPENAI_REASONING_EFFORT || "medium",
+          effort: process.env.OPENAI_REASONING_EFFORT || "low",
         },
-        max_output_tokens: 2200,
+        max_output_tokens: mode === "ideas" ? MAX_IDEA_TOKENS : MAX_ANSWER_TOKENS,
         safety_identifier: safetyIdentifier(event),
       };
 
@@ -271,6 +302,14 @@ Ciddi ve yakın tehlike, yangın, kaldırma ekipmanı, elektrik, rigging veya ac
 
     if (!response.ok) {
       console.error(`${provider} error`, response.status, data);
+      if (response.status === 429) {
+        return json(
+          429,
+          { error: "Ücretsiz model kotası doldu. Birkaç dakika sonra yeniden deneyin veya “Hızlı · yalnız el kitabı” modunu kullanın." },
+          origin,
+          { "retry-after": "60" }
+        );
+      }
       return json(
         response.status,
         { error: "Canlı model yanıt veremedi. Lütfen kısa süre sonra yeniden deneyin." },

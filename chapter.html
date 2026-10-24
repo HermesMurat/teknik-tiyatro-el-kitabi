@@ -68,7 +68,7 @@
     <aside class="side">
       <a class="back" href="./">← Tüm bölümler</a>
       <div class="chapter-search">
-        <input id="chapterSearch" type="search" placeholder="Bu bölümde ara…">
+        <input id="chapterSearch" type="search" aria-label="Bu bölümde ara" placeholder="Bu bölümde ara…">
         <button class="btn secondary" id="showAll" type="button">Tüm yazıları göster</button>
         <div class="match-status" id="matchStatus"></div>
       </div>
@@ -90,17 +90,32 @@
       <div><b>Bağlamlı Araştırma Rehberi</b><br><small>Bu bölümün tam metni, rehberin tamamı ve ilgili resmî kamu kaynakları</small></div>
       <button class="btn secondary" id="closeAI">Kapat</button>
     </div>
-    <div class="dlgbody" id="messages">
+    <div class="dlgbody" id="messages" role="log" aria-live="polite" aria-label="Yapay zekâ yanıtları">
       <div class="msg">Bu bölüm veya seçtiğiniz alt başlık hakkında soru sorun. Yanıt hazırlanırken görünen başlık değil, bölümün gerçek metni kullanılır.</div>
     </div>
     <form class="ai-form" id="aiForm">
-      <textarea id="question" maxlength="1200" rows="3" placeholder="Bu bölümdeki bir görev, risk, prosedür veya mevzuat konusunu sorun…"></textarea>
+      <textarea id="question" maxlength="1200" rows="3" aria-label="Sorunuz" placeholder="Bu bölümdeki bir görev, risk, prosedür veya mevzuat konusunu sorun…"></textarea>
       <div class="modes">
-        <label><input type="radio" name="mode" value="book"> Yalnız el kitabı</label>
-        <label><input type="radio" name="mode" value="hybrid" checked> Rehber + resmî kaynaklar</label>
+        <label><input type="radio" name="mode" value="book"> Hızlı · yalnız el kitabı</label>
+        <label><input type="radio" name="mode" value="hybrid" checked> Araştırmalı · rehber + resmî kaynaklar</label>
       </div>
-      <div class="status">İnternet araştırması yalnız konuya doğrudan ilişkin resmî kamu kurumlarının sayfalarıyla sınırlıdır.</div>
+      <div class="status">Hızlı mod saniyeler içinde yanıt verir; araştırmalı mod resmî kamu sitelerini de tarar.</div>
       <button class="btn" type="submit">Araştır ve yanıtla</button>
+    </form>
+  </dialog>
+
+  <dialog id="ideas">
+    <div class="dlghead">
+      <div><b>Yaratıcı Öneri Atölyesi</b><br><small>Kanun ve el kitabı sınırları içinde uygulanabilir fikirler</small></div>
+      <button class="btn secondary" id="closeIdeas" type="button">Kapat</button>
+    </div>
+    <div class="dlgbody" id="ideasBody" role="log" aria-live="polite" aria-label="Yaratıcı öneriler">
+      <div class="msg">Bir soru yanıtlandıktan sonra “Yaratıcı öneriler” düğmesine basın; alternatif çözümler burada listelenir.</div>
+    </div>
+    <form class="ai-form" id="ideasForm">
+      <textarea id="ideasQuestion" maxlength="1200" rows="2" aria-label="Fikir üretilecek konu" placeholder="Fikir üretilecek konu…"></textarea>
+      <div class="status">Öneriler bağlayıcı değildir; uygulanabilirlik, bütçe ve mevzuat uygunluğu kurum onayına bağlıdır.</div>
+      <button class="btn" type="submit">Öneri üret</button>
     </form>
   </dialog>
 
@@ -236,6 +251,6 @@
       $("#progress").style.width = `${height ? (scrollY / height) * 100 : 0}%`;
     });
   </script>
-  <script src="rehber.js?v=9"></script>
+  <script src="rehber.js?v=10"></script>
 </body>
 </html>
